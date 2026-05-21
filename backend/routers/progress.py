@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from schemas.progress import ProgressOut, CompleteRequest, QuizSubmitRequest, QuizSubmitResponse
@@ -8,12 +8,15 @@ import crud.progress as crud_progress
 import crud.lessons as crud_lessons
 import crud.users as crud_users
 from constants import XP_PER_LESSON, XP_PER_QUIZ
+from core.limiter import limiter
 
 router = APIRouter(prefix="/progress", tags=["progress"])
 
 
 @router.get("", response_model=list[ProgressOut])
+@limiter.limit("60/minute")
 async def get_progress(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -21,7 +24,9 @@ async def get_progress(
 
 
 @router.post("/{lesson_id}", response_model=ProgressOut)
+@limiter.limit("30/minute")
 async def complete_lesson(
+    request: Request,
     lesson_id: int,
     body: CompleteRequest,
     db: AsyncSession = Depends(get_db),
@@ -39,7 +44,9 @@ async def complete_lesson(
 
 
 @router.post("/{lesson_id}/quiz", response_model=QuizSubmitResponse)
+@limiter.limit("30/minute")
 async def submit_quiz(
+    request: Request,
     lesson_id: int,
     body: QuizSubmitRequest,
     db: AsyncSession = Depends(get_db),

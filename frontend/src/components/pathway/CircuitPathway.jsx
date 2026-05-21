@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Lock, Play } from 'lucide-react'
 
 // SVG coordinate system: viewBox "0 0 100 {height}"
-// x values are percentages (0–100), y values are pixels
 const SVG_TRUNK_X = 50
 const SVG_LEFT_X = 18
 const SVG_RIGHT_X = 72
@@ -11,13 +10,26 @@ const NODE_GAP = 160   // px between node centers
 const TOP_PAD = 60
 const BOTTOM_PAD = 50
 
-const COLORS = {
-  unlocked:  'var(--accent)',
-  completed: 'var(--success)',
-  locked:    'var(--hairline)',
+// Resolve the color for a node circle given its status.
+// accentOverride replaces cyan for 'unlocked' nodes (used by partial modules).
+function nodeColor(status, accentOverride) {
+  if (status === 'unlocked') return accentOverride ?? 'var(--accent)'
+  if (status === 'completed') return 'var(--success)'
+  return 'var(--hairline)'
 }
 
-export default function CircuitPathway({ lessons }) {
+// Resolve the color for a trunk segment between two consecutive nodes.
+// Cyan only between two completed nodes; orange if either node is unlocked (with override);
+// grey otherwise.
+function trunkColor(fromStatus, toStatus, accentOverride) {
+  if (fromStatus === 'unlocked' || toStatus === 'unlocked') {
+    return accentOverride ?? 'var(--accent)'
+  }
+  if (fromStatus === 'completed' && toStatus === 'completed') return 'var(--accent)'
+  return 'var(--hairline)'
+}
+
+export default function CircuitPathway({ lessons, accentOverride }) {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
@@ -46,10 +58,10 @@ export default function CircuitPathway({ lessons }) {
         viewBox={`0 0 100 ${totalHeight}`}
         preserveAspectRatio="none"
       >
-        {/* Vertical trunk segments between consecutive nodes */}
+        {/* Vertical trunk segments */}
         {positions.slice(0, -1).map((from, i) => {
           const to = positions[i + 1]
-          const color = COLORS[lessons[i + 1].status] ?? COLORS.locked
+          const color = trunkColor(lessons[i].status, lessons[i + 1].status, accentOverride)
           return (
             <line
               key={`trunk-${i}`}
@@ -64,7 +76,7 @@ export default function CircuitPathway({ lessons }) {
 
         {/* Horizontal branch lines from trunk to each node */}
         {positions.map((pos, i) => {
-          const color = COLORS[lessons[i].status] ?? COLORS.locked
+          const color = nodeColor(lessons[i].status, accentOverride)
           return (
             <line
               key={`branch-${i}`}
@@ -79,7 +91,7 @@ export default function CircuitPathway({ lessons }) {
 
         {/* Junction dots at trunk-branch intersections */}
         {positions.map((pos, i) => {
-          const color = COLORS[lessons[i].status] ?? COLORS.locked
+          const color = nodeColor(lessons[i].status, accentOverride)
           return (
             <circle
               key={`dot-${i}`}
@@ -102,8 +114,13 @@ export default function CircuitPathway({ lessons }) {
         const title = t(lesson.titleKey)
 
         const handleClick = () => {
-          if (isPlayable || isCompleted) navigate(`/lesson/${lesson.id}`)
+          if (isPlayable || isCompleted) navigate(`/curriculum/${lesson.id}`)
         }
+
+        // Override border/bg/text colors for unlocked nodes when accentOverride is set
+        const unlockedStyle = accentOverride
+          ? { borderColor: accentOverride, backgroundColor: `${accentOverride}1a`, color: accentOverride }
+          : {}
 
         return (
           <div
@@ -111,13 +128,6 @@ export default function CircuitPathway({ lessons }) {
             className="absolute flex flex-col items-center gap-1.5"
             style={{ left: `${x}%`, top: y, transform: 'translate(-50%, -50%)' }}
           >
-            {/* Active node: "tap to enter" label above */}
-            {isPlayable && (
-              <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-[0.2em] border border-hairline rounded-full px-2.5 py-0.5 bg-background/60 mb-0.5">
-                tap to enter
-              </span>
-            )}
-
             {/* Node circle */}
             {isCompleted && (
               <div
@@ -132,8 +142,15 @@ export default function CircuitPathway({ lessons }) {
               <div
                 onClick={handleClick}
                 className="w-14 h-14 rounded-full border-2 border-accent bg-accent/10 flex items-center justify-center cursor-pointer node-pulse hover:scale-105 transition-transform"
+                style={unlockedStyle}
               >
-                <Play size={20} className="text-accent ml-0.5" fill="currentColor" />
+                <Play
+                  size={20}
+                  className={accentOverride ? '' : 'text-accent'}
+                  style={accentOverride ? { color: accentOverride } : {}}
+                  fill="currentColor"
+                  strokeWidth={0}
+                />
               </div>
             )}
 

@@ -16,21 +16,7 @@
     "title": ">_ calibrare.exe",
     "question": "Ești complet nou în programare?",
     "beginnerBtn": "Începe de la zero",
-    "beginnerHint": "// Începe la MOD_01 — Fundamente",
-    "advancedBtn": "Testează-mi abilitățile",
-    "advancedHint": "// Rulează placement_test.exe — sari la MOD_02 dacă treci",
-    "testLabel": "test_de_plasare.exe",
-    "nextQuestion": "> întrebarea_următoare",
-    "submitTest": "> trimite_testul",
-    "pass": "[PROMOVAT]",
-    "fail": "[RESPINS]",
-    "correctCount": "{{correct}} / {{total}} corecte",
-    "passMessagePre": "MOD_01 marcat complet. Începi la",
-    "passModule": "MOD_02 // BUCLE & LOGICĂ",
-    "failMessagePre": "Începe la",
-    "failModule": "MOD_01 // FUNDAMENTE",
-    "failMessagePost": "pentru o bază solidă.",
-    "launchBtn": "> lansează_panoul"
+    "beginnerHint": "// Începe la MOD_01 — Fundamente"
   },
   "nav": {
     "pathway": "Traseu",
@@ -101,7 +87,9 @@
     "topDebuggers": "Top depanatori · azi",
     "latestCommunity": "Breasla Depanatorilor",
     "noQuestions": "Nicio întrebare încă. Fii primul!",
-    "jumpToFeed": "> DEPANEAZĂ & CÂȘTIGĂ"
+    "jumpToFeed": "> DEPANEAZĂ & CÂȘTIGĂ",
+    "askQuestion": "Ai vreo întrebare? Întreabă comunitatea",
+    "askBtn": ">_ ADRESEAZĂ O ÎNTREBARE"
   },
   "modules": {
     "mod_01": { "title": "BAZELE",      "subtitle": "Sintaxă · Tipuri · I/O · Operatori" },
@@ -222,6 +210,7 @@
     "answer": "Răspunde",
     "answers": "Răspunsuri",
     "accept": "Acceptă Răspunsul",
+    "markUseful": ">_ Marchează ca Soluție Utilă",
     "accepted": "✓ Acceptat",
     "acceptedInfo": "Acceptarea unui răspuns oferă autorului +1 💠 Token",
     "noQuestions": "Nicio întrebare încă. Fii primul care întreabă!",

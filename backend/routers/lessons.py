@@ -1,16 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from schemas.lesson import LessonSummary, LessonDetail, QuizQuestionOut
 from dependencies import get_current_user
 from models.user import User
 import crud.lessons as crud_lessons
+from core.limiter import limiter
 
 router = APIRouter(prefix="/lessons", tags=["lessons"])
 
 
 @router.get("", response_model=list[LessonSummary])
+@limiter.limit("60/minute")
 async def list_lessons(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_user),
 ):
@@ -18,7 +21,9 @@ async def list_lessons(
 
 
 @router.get("/{slug}", response_model=LessonDetail)
+@limiter.limit("60/minute")
 async def get_lesson(
+    request: Request,
     slug: str,
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_user),

@@ -1,24 +1,32 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import client from '../api/client'
 import useStore from '../store/useStore'
 import FilterSidebar from '../components/community/FilterSidebar'
 import TicketCard from '../components/community/TicketCard'
+import QuestionCard from '../components/community/QuestionCard'
 import OpenTicketModal from '../components/community/OpenTicketModal'
 import { TicketSkeleton } from '../components/ui/Skeleton'
 import { GUILD_TICKETS } from '../utils/constants'
+
+function detectLang(body = '') {
+  const b = body.toLowerCase()
+  if (b.includes('python') || b.includes('.py') || b.includes('def ') || b.includes('print(')) return 'PY'
+  return 'C++'
+}
 
 function normalizeBounties() {
   return GUILD_TICKETS.map((t) => ({
     id: `bounty-${t.id}`,
     type: 'bounty',
     module: t.module,
+    lang: t.lang === 'PY' ? 'PY' : 'C++',
     title: t.issue,
     title_ro: t.issue_ro,
     body: t.body,
     body_ro: t.body_ro,
     path: t.path,
-    lang: t.lang,
     user: t.user,
     codeSnippet: t.codeSnippet,
     options: t.options,
@@ -31,25 +39,37 @@ function normalizeBounties() {
 function normalizeDiscussions(questions) {
   return questions.map((q) => ({
     id: `disc-${q.id}`,
+    rawId: q.id,
     type: 'discussion',
     module: 'all',
+    lang: detectLang(q.body),
     title: q.body?.slice(0, 80) ?? '',
     body: q.body ?? '',
     author: q.author_username,
+    author_username: q.author_username,
+    user_id: q.user_id,
     answer_count: q.answer_count ?? 0,
     status: q.answer_count > 0 ? 'solved' : 'open',
   }))
 }
 
+const LANG_TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'C++', label: 'C++' },
+  { key: 'PY',  label: 'Python' },
+]
+
 export default function Community() {
   const { t } = useTranslation()
   const { user, lang, unlockBadge } = useStore()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const [tickets, setTickets] = useState(normalizeBounties)
   const [loading, setLoading] = useState(true)
   const [topicFilter, setTopicFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [sortBy, setSortBy] = useState('newest')
+  const [langFilter, setLangFilter] = useState('all')
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
@@ -59,21 +79,34 @@ export default function Community() {
       .finally(() => setLoading(false))
   }, [])
 
+  // Auto-open modal when ?new=1 query param is present
+  useEffect(() => {
+    if (searchParams.get('new') === '1') {
+      setShowModal(true)
+      setSearchParams({}, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
+
   const handleSolve = (id) =>
     setTickets((prev) => prev.map((t) => t.id === id ? { ...t, status: 'solved' } : t))
 
   const handleNewTicket = (ticket) => {
-    setTickets((prev) => [ticket, ...prev])
+    setTickets((prev) => [{ ...ticket, type: 'bounty', lang: 'C++', module: 'all' }, ...prev])
     unlockBadge('GUILD_MEMBER')
+  }
+
+  const handleAnswerAccepted = (ticketId) => {
+    setTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'solved' } : t))
   }
 
   const filtered = tickets.filter((ticket) => {
     const topicOk = topicFilter === 'all' || ticket.module === topicFilter
+    const langOk = langFilter === 'all' || ticket.lang === langFilter
     const statusOk = statusFilter === 'all'
       || (statusFilter === 'open-bounties' && ticket.type === 'bounty' && ticket.status === 'open')
       || (statusFilter === 'solved' && ticket.status === 'solved')
-      || (statusFilter === 'my-stack' && ticket.author === user?.username)
-    return topicOk && statusOk
+      || (statusFilter === 'my-stack' && (ticket.author === user?.username || ticket.user === user?.username))
+    return topicOk && langOk && statusOk
   })
 
   const sorted = [...filtered].sort((a, b) => {
@@ -82,7 +115,7 @@ export default function Community() {
     return 0
   })
 
-  const isFiltered = topicFilter !== 'all' || statusFilter !== 'all' || sortBy !== 'newest'
+  const isFiltered = topicFilter !== 'all' || statusFilter !== 'all' || sortBy !== 'newest' || langFilter !== 'all'
 
   return (
     <div className="relative py-6 space-y-6">
@@ -120,7 +153,24 @@ export default function Community() {
           sortBy={sortBy}             setSortBy={setSortBy}
         />
 
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 space-y-4">
+          {/* Language filter tabs */}
+          <div className="flex rounded-xl overflow-hidden border border-hairline w-fit">
+            {LANG_TABS.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setLangFilter(key)}
+                className={`px-4 py-2 text-xs font-mono font-bold uppercase tracking-[0.1em] transition-colors
+                  ${langFilter === key
+                    ? 'bg-accent text-accent-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           {loading ? (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => <TicketSkeleton key={i} />)}
@@ -129,15 +179,23 @@ export default function Community() {
             <p className="font-mono text-sm text-muted-foreground py-4">{t('community.noTickets')}</p>
           ) : (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              {sorted.map((ticket) => (
-                <TicketCard
-                  key={ticket.id}
-                  ticket={ticket}
-                  lang={lang}
-                  isFiltered={isFiltered}
-                  onSolve={handleSolve}
-                />
-              ))}
+              {sorted.map((ticket) =>
+                ticket.type === 'discussion' ? (
+                  <QuestionCard
+                    key={ticket.id}
+                    question={ticket}
+                    onAnswerAccepted={() => handleAnswerAccepted(ticket.id)}
+                  />
+                ) : (
+                  <TicketCard
+                    key={ticket.id}
+                    ticket={ticket}
+                    lang={lang}
+                    isFiltered={isFiltered}
+                    onSolve={handleSolve}
+                  />
+                )
+              )}
             </div>
           )}
         </div>

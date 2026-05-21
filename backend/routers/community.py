@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
 from schemas.community import QuestionCreate, QuestionOut, AnswerCreate, AnswerOut
@@ -7,12 +7,15 @@ from models.user import User
 import crud.community as crud_community
 import crud.users as crud_users
 from constants import XP_PER_ACCEPTED, XP_PER_BOUNTY, MAX_LIVES
+from core.limiter import limiter
 
 router = APIRouter(prefix="/community", tags=["community"])
 
 
 @router.post("/tokens/earn")
+@limiter.limit("30/minute")
 async def earn_token(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -24,7 +27,9 @@ async def earn_token(
 
 
 @router.get("/questions", response_model=list[QuestionOut])
+@limiter.limit("60/minute")
 async def list_questions(
+    request: Request,
     lesson_id: int | None = None,
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_user),
@@ -34,7 +39,9 @@ async def list_questions(
 
 
 @router.post("/questions", response_model=QuestionOut, status_code=201)
+@limiter.limit("20/minute")
 async def ask_question(
+    request: Request,
     body: QuestionCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -52,7 +59,9 @@ async def ask_question(
 
 
 @router.get("/questions/{question_id}/answers", response_model=list[AnswerOut])
+@limiter.limit("60/minute")
 async def list_answers(
+    request: Request,
     question_id: int,
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_user),
@@ -62,7 +71,9 @@ async def list_answers(
 
 
 @router.post("/answers/{question_id}", response_model=AnswerOut, status_code=201)
+@limiter.limit("20/minute")
 async def post_answer(
+    request: Request,
     question_id: int,
     body: AnswerCreate,
     db: AsyncSession = Depends(get_db),
@@ -84,7 +95,9 @@ async def post_answer(
 
 
 @router.patch("/answers/{answer_id}/accept", response_model=AnswerOut)
+@limiter.limit("30/minute")
 async def accept_answer(
+    request: Request,
     answer_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),

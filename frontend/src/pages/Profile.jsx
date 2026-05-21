@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Hexagon, Zap, BookOpen, Pencil, Check, X, Brain } from 'lucide-react'
+import { Hexagon, Zap, BookOpen, Pencil, Check, X, Brain, KeyRound, Trash2 } from 'lucide-react'
 import client from '../api/client'
 import useStore from '../store/useStore'
+import Modal from '../components/ui/Modal'
 import { MAX_TOKENS } from '../utils/constants'
 
 function StatCard({ icon: Icon, value, label, iconClass }) {
@@ -17,14 +19,27 @@ function StatCard({ icon: Icon, value, label, iconClass }) {
 
 export default function Profile() {
   const { t } = useTranslation()
-  const { user, lives, streak, syncFromUser, setUser, setShowProtocolModal } = useStore()
+  const navigate = useNavigate()
+  const { user, lives, streak, syncFromUser, setUser, setShowProtocolModal, logout } = useStore()
   const [completedCount, setCompletedCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
+  // Username edit
   const [editing, setEditing] = useState(false)
   const [nameInput, setNameInput] = useState('')
   const [saving, setSaving] = useState(false)
   const [nameError, setNameError] = useState('')
+
+  // Change password
+  const [showPwForm, setShowPwForm] = useState(false)
+  const [pwForm, setPwForm] = useState({ current: '', next: '' })
+  const [pwLoading, setPwLoading] = useState(false)
+  const [pwError, setPwError] = useState('')
+  const [pwSuccess, setPwSuccess] = useState(false)
+
+  // Delete account
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +85,41 @@ export default function Profile() {
     }
   }
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault()
+    if (pwForm.next.length < 4) {
+      setPwError('Parola nouă trebuie să aibă cel puțin 4 caractere.')
+      return
+    }
+    setPwLoading(true)
+    setPwError('')
+    setPwSuccess(false)
+    try {
+      await client.patch('/auth/me/password', {
+        current_password: pwForm.current,
+        new_password: pwForm.next,
+      })
+      setPwSuccess(true)
+      setPwForm({ current: '', next: '' })
+    } catch (err) {
+      setPwError(err?.response?.data?.detail ?? 'Eroare la schimbarea parolei.')
+    } finally {
+      setPwLoading(false)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true)
+    try {
+      await client.delete('/auth/me')
+      logout()
+      navigate('/', { replace: true })
+    } catch {
+      setDeleteLoading(false)
+      setShowDeleteModal(false)
+    }
+  }
+
   const joinDate = user?.created_at
     ? new Date(user.created_at).toLocaleDateString()
     : '—'
@@ -90,7 +140,6 @@ export default function Profile() {
         </div>
 
         <div className="text-center space-y-1">
-          {/* Editable username row */}
           {editing ? (
             <div className="flex items-center gap-2">
               <input
@@ -139,7 +188,7 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Stats grid — 3 cards, no XP */}
+      {/* Stats grid */}
       <div>
         <h2 className="text-base font-semibold mb-3">{t('profile.stats')}</h2>
         <div className="grid grid-cols-3 gap-3">
@@ -165,8 +214,10 @@ export default function Profile() {
       </div>
 
       {/* Account settings */}
-      <div>
+      <div className="space-y-2">
         <h2 className="text-base font-semibold mb-3">{t('nav.settings')}</h2>
+
+        {/* Reconfigure protocol */}
         <button
           onClick={() => setShowProtocolModal(true)}
           className="w-full flex items-center gap-3 border border-hairline rounded-xl px-4 py-3 text-left hover:border-accent/50 hover:bg-accent/5 transition-colors group"
@@ -181,7 +232,99 @@ export default function Profile() {
             </div>
           </div>
         </button>
+
+        {/* Change password toggle */}
+        <button
+          onClick={() => { setShowPwForm((p) => !p); setPwError(''); setPwSuccess(false) }}
+          className="w-full flex items-center gap-3 border border-hairline rounded-xl px-4 py-3 text-left hover:border-accent/50 hover:bg-accent/5 transition-colors group"
+        >
+          <KeyRound size={16} className="text-muted-foreground group-hover:text-accent transition-colors flex-shrink-0" strokeWidth={2} />
+          <div className="font-mono text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
+            Schimbă parola
+          </div>
+        </button>
+
+        {/* Change password form (collapsible) */}
+        {showPwForm && (
+          <form
+            onSubmit={handleChangePassword}
+            className="glass-strong rounded-xl px-4 py-4 space-y-3"
+          >
+            <input
+              type="password"
+              placeholder="Parola curentă"
+              value={pwForm.current}
+              onChange={(e) => setPwForm((p) => ({ ...p, current: e.target.value }))}
+              required
+              className="w-full bg-background border border-hairline rounded-lg px-3 py-2.5 text-sm font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+            />
+            <div>
+              <input
+                type="password"
+                placeholder="Parola nouă (min. 4 caractere)"
+                value={pwForm.next}
+                onChange={(e) => setPwForm((p) => ({ ...p, next: e.target.value }))}
+                required
+                className="w-full bg-background border border-hairline rounded-lg px-3 py-2.5 text-sm font-mono text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent"
+              />
+              {pwForm.next.length > 0 && pwForm.next.length < 4 && (
+                <p className="text-xs text-destructive mt-1 font-mono pl-1">
+                  Parola trebuie să aibă cel puțin 4 caractere.
+                </p>
+              )}
+            </div>
+
+            {pwError && <p className="text-xs text-destructive font-mono">{pwError}</p>}
+            {pwSuccess && <p className="text-xs text-success font-mono">Parola a fost schimbată cu succes.</p>}
+
+            <button
+              type="submit"
+              disabled={pwLoading}
+              className="w-full bg-accent text-accent-foreground font-mono text-xs font-bold uppercase tracking-[0.12em] rounded-md px-4 py-2.5 hover:shadow-[0_0_30px_-6px_var(--glow-accent)] transition-all disabled:opacity-50"
+            >
+              {pwLoading ? 'Se salvează...' : 'Salvează parola'}
+            </button>
+          </form>
+        )}
       </div>
+
+      {/* Danger zone — Delete Account */}
+      <div className="rounded-xl border border-destructive/30 px-4 py-4 space-y-3">
+        <h2 className="text-sm font-semibold text-destructive font-mono">// Zonă periculoasă</h2>
+        <p className="text-xs text-muted-foreground">
+          Ștergerea contului este ireversibilă. Toate datele tale (progres, întrebări, răspunsuri) vor fi șterse permanent.
+        </p>
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="flex items-center gap-2 border border-destructive/50 text-destructive font-mono text-xs font-bold uppercase tracking-[0.1em] rounded-md px-4 py-2 hover:bg-destructive/10 transition-colors"
+        >
+          <Trash2 size={13} />
+          Șterge contul
+        </button>
+      </div>
+
+      {/* Delete confirmation modal */}
+      <Modal open={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Confirmare ștergere cont">
+        <p className="text-sm text-muted-foreground mb-6">
+          Ești sigur? Această acțiune este <span className="text-destructive font-semibold">ireversibilă</span>.
+          Toate datele tale vor fi șterse permanent.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowDeleteModal(false)}
+            className="flex-1 border border-hairline rounded-md py-2.5 text-sm font-mono font-semibold text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Anulează
+          </button>
+          <button
+            onClick={handleDeleteAccount}
+            disabled={deleteLoading}
+            className="flex-1 bg-destructive text-white rounded-md py-2.5 text-sm font-mono font-bold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {deleteLoading ? 'Se șterge...' : 'Șterge contul'}
+          </button>
+        </div>
+      </Modal>
 
     </div>
   )

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Target, Trophy, MessageCircleQuestion, BatteryFull } from 'lucide-react'
+import { Target, Trophy, MessageCircleQuestion, BatteryFull, HelpCircle } from 'lucide-react'
 
 const PLACEHOLDER_HELPERS = [
   { name: 'Maria', xp: 320 },
@@ -14,6 +14,20 @@ export default function Sidebar({ completedToday = 0, latestQuestion = null }) {
 
   return (
     <div className="hidden lg:flex flex-col gap-3 w-72 flex-shrink-0">
+
+      {/* Ask the Community */}
+      <div className="rounded-2xl glass-strong p-5">
+        <div className="flex items-center gap-2 mb-1.5">
+          <HelpCircle size={14} className="text-accent" strokeWidth={2.25} />
+          <span className="text-sm font-bold text-foreground">{t('sidebar.askQuestion')}</span>
+        </div>
+        <button
+          onClick={() => navigate('/community?new=1')}
+          className="w-full inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground font-mono text-xs font-bold uppercase tracking-[0.12em] rounded-md px-4 py-2.5 hover:shadow-[0_0_30px_-6px_var(--glow-accent)] transition-all"
+        >
+          {t('sidebar.askBtn')}
+        </button>
+      </div>
 
       {/* Daily Quest */}
       <div className="rounded-2xl glass-strong p-5">

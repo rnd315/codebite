@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
 import useAuth from '../hooks/useAuth'
 import Button from '../components/ui/Button'
 import TerminalBoot from '../components/layout/TerminalBoot'
 
 export default function Home() {
-  const { t } = useTranslation()
   const navigate = useNavigate()
   const { login, register, loading, error } = useAuth()
-  const [tab, setTab] = useState('login') // 'login' | 'register'
+  const [tab, setTab] = useState('login')
   const [form, setForm] = useState({ username: '', email: '', password: '' })
   const [bootDone, setBootDone] = useState(
     () => localStorage.getItem('codebite_boot_v1') === '1'
@@ -21,8 +19,11 @@ export default function Home() {
     setBootDone(true)
   }
 
+  const pwTooShort = form.password.length > 0 && form.password.length < 4
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (pwTooShort) return
     const result =
       tab === 'login'
         ? await login({ email: form.email, password: form.password })
@@ -31,6 +32,12 @@ export default function Home() {
   }
 
   const update = (field) => (e) => setForm((p) => ({ ...p, [field]: e.target.value }))
+
+  const errorMsg = error
+    ? tab === 'login'
+      ? 'Userul sau parola introdusa nu sunt corecte.'
+      : 'Înregistrare eșuată. Încearcă un alt email sau nume de utilizator.'
+    : null
 
   return (
     <AnimatePresence mode="wait">
@@ -50,13 +57,17 @@ export default function Home() {
               <span className="text-accent">Code</span>
               <span className="text-foreground">Bite</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-2">{t('auth.tagline')}</p>
-            <p className="text-sm text-muted-foreground">{t('auth.subtitle')}</p>
+            <p className="text-xl text-muted-foreground mb-2">
+              Compilează-ți abilitățile. Stăpânește algoritmii, pas cu pas.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Învățare gamificată pentru C++ și Python — construit pentru olimpici.
+            </p>
 
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5">{t('home.featureTokens')}</span>
-              <span className="flex items-center gap-1.5">{t('home.featureUptime')}</span>
-              <span className="flex items-center gap-1.5">{t('home.featureVisualizer')}</span>
+              <span className="flex items-center gap-1.5">💠 Tokeni</span>
+              <span className="flex items-center gap-1.5">⚡ Uptime</span>
+              <span className="flex items-center gap-1.5">🖥 Vizualizator</span>
             </div>
           </div>
 
@@ -74,7 +85,7 @@ export default function Home() {
                       : 'text-muted-foreground hover:text-foreground'
                     }`}
                 >
-                  {t_ === 'login' ? t('auth.login') : t('auth.register')}
+                  {t_ === 'login' ? 'Autentificare' : 'Înregistrare'}
                 </button>
               ))}
             </div>
@@ -83,7 +94,7 @@ export default function Home() {
               {tab === 'register' && (
                 <input
                   type="text"
-                  placeholder={t('auth.username')}
+                  placeholder="Nume de utilizator"
                   value={form.username}
                   onChange={update('username')}
                   required
@@ -92,31 +103,40 @@ export default function Home() {
               )}
               <input
                 type="email"
-                placeholder={t('auth.email')}
+                placeholder="Adresă de email"
                 value={form.email}
                 onChange={update('email')}
                 required
                 className="w-full bg-background border border-hairline rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-accent text-foreground placeholder:text-muted-foreground font-mono"
               />
-              <input
-                type="password"
-                placeholder={t('auth.password')}
-                value={form.password}
-                onChange={update('password')}
-                required
-                className="w-full bg-background border border-hairline rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-accent text-foreground placeholder:text-muted-foreground font-mono"
-              />
+              <div>
+                <input
+                  type="password"
+                  placeholder="Parolă"
+                  value={form.password}
+                  onChange={update('password')}
+                  required
+                  className="w-full bg-background border border-hairline rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-accent text-foreground placeholder:text-muted-foreground font-mono"
+                />
+                {pwTooShort && (
+                  <p className="text-xs text-destructive mt-1 font-mono pl-1">
+                    Parola trebuie să aibă cel puțin 4 caractere.
+                  </p>
+                )}
+              </div>
 
-              {error && (
-                <p className="text-xs text-destructive text-center">
-                  {error.startsWith('error') ? t(`auth.${error}`) : error}
-                </p>
+              {errorMsg && (
+                <p className="text-xs text-destructive text-center">{errorMsg}</p>
               )}
 
-              <Button type="submit" disabled={loading} className="w-full mt-1">
+              <Button
+                type="submit"
+                disabled={loading || pwTooShort}
+                className="w-full mt-1"
+              >
                 {loading
-                  ? tab === 'login' ? t('auth.loggingIn') : t('auth.registering')
-                  : tab === 'login' ? t('auth.loginBtn') : t('auth.registerBtn')
+                  ? tab === 'login' ? 'Se autentifică...' : 'Se creează contul...'
+                  : tab === 'login' ? 'Intră în cont' : 'Creează cont'
                 }
               </Button>
             </form>
@@ -125,7 +145,10 @@ export default function Home() {
               onClick={() => setTab(tab === 'login' ? 'register' : 'login')}
               className="mt-4 w-full text-xs text-muted-foreground hover:text-foreground transition-colors text-center"
             >
-              {tab === 'login' ? t('auth.switchToRegister') : t('auth.switchToLogin')}
+              {tab === 'login'
+                ? 'Ești nou? Creează un cont'
+                : 'Ai deja cont? Autentifică-te'
+              }
             </button>
           </div>
         </motion.div>

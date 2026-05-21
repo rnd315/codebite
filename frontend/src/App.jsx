@@ -11,6 +11,7 @@ import Onboarding from './pages/Onboarding'
 import Pathway from './pages/Pathway'
 import ModuleView from './pages/ModuleView'
 import Lesson from './pages/Lesson'
+import CurriculumLesson from './pages/CurriculumLesson'
 import Community from './pages/Community'
 import Profile from './pages/Profile'
 import Leaderboard from './pages/Leaderboard'
@@ -79,6 +80,11 @@ export default function App() {
         <Route path="/lesson/:slug" element={
           <ProtectedRoute>
             <Layout><PageTransition><Lesson /></PageTransition></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/curriculum/:lessonId" element={
+          <ProtectedRoute>
+            <Layout><PageTransition><CurriculumLesson /></PageTransition></Layout>
           </ProtectedRoute>
         } />
         <Route path="/community" element={

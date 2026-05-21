@@ -53,7 +53,7 @@ const useStore = create(
       setLang: (lang) => set({ lang }),
 
       // Personalization — persisted
-      learningProtocol: null,
+      learningProtocol: 'architect',
       isOnboarded: false,
       showProtocolModal: false,
       setLearningProtocol: (learningProtocol) => set({ learningProtocol }),

@@ -24,7 +24,7 @@ export default function Footer() {
           </a>
           <span className="text-hairline">·</span>
           <a
-            href="https://github.com"
+            href="https://github.com/rnd315/codebite"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground transition-colors"

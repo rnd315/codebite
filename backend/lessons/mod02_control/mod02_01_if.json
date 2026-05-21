@@ -1,1 +1,25 @@
-﻿{"id": "mod02_01", "status": "empty"}
+{
+  "id": "mod02_01",
+  "status": "stub",
+  "titleKey": "lessons.mod02_01",
+  "interactiveComponent": null,
+  "theory": {
+    "ro": {
+      "cpp": { "architect": "", "hacker": "", "socrates": "" },
+      "python": { "architect": "", "hacker": "", "socrates": "" }
+    },
+    "en": {
+      "cpp": { "architect": "", "hacker": "", "socrates": "" },
+      "python": { "architect": "", "hacker": "", "socrates": "" }
+    }
+  },
+  "quiz": {
+    "question_ro": "",
+    "question_en": "",
+    "options_ro": [],
+    "options_en": [],
+    "correctAnswerIndex": 0,
+    "explanation_ro": "",
+    "explanation_en": ""
+  }
+}

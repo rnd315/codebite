@@ -1,8 +1,10 @@
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
-from sqlalchemy import select
+from sqlalchemy import select, delete as sa_delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
+from models.community import Answer, Question
+from models.progress import UserProgress
 from core.security import hash_password
 
 MAX_LIVES = 5
@@ -75,6 +77,28 @@ async def update_username(db: AsyncSession, user: User, username: str) -> User:
     await db.commit()
     await db.refresh(user)
     return user
+
+
+async def update_password(db: AsyncSession, user: User, new_password: str) -> None:
+    user.hashed_password = hash_password(new_password)
+    await db.commit()
+
+
+async def delete_user(db: AsyncSession, user: User) -> None:
+    # 1. Answers posted by this user
+    await db.execute(sa_delete(Answer).where(Answer.user_id == user.id))
+    # 2. Answers on this user's questions
+    q_ids_result = await db.execute(select(Question.id).where(Question.user_id == user.id))
+    q_ids = q_ids_result.scalars().all()
+    if q_ids:
+        await db.execute(sa_delete(Answer).where(Answer.question_id.in_(q_ids)))
+    # 3. Questions
+    await db.execute(sa_delete(Question).where(Question.user_id == user.id))
+    # 4. Progress
+    await db.execute(sa_delete(UserProgress).where(UserProgress.user_id == user.id))
+    # 5. User record
+    await db.delete(user)
+    await db.commit()
 
 
 async def update_streak_and_xp(db: AsyncSession, user: User, xp_gain: int) -> User:

@@ -1,5 +1,6 @@
 """
-Seed script — populates the database with the canonical 16-lesson curriculum.
+Seed script — populates the database with the canonical 16-lesson curriculum
+and 5 community discussion questions authored by dummy users.
 
 Usage:
   python seed.py            — insert new lessons, skip existing slugs
@@ -15,15 +16,70 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import select, delete
 from database import Base
 from models.lesson import Lesson, QuizQuestion
+from models.user import User
+from models.community import Question
+from core.security import hash_password
 
 DATABASE_URL = "sqlite+aiosqlite:///./codebite.db"
 
-MOD01 = "MOD_01 // FOUNDATIONS"
-MOD02 = "MOD_02 // CONTROL FLOW"
-MOD03 = "MOD_03 // NUMBER CRUNCHING"
-MOD04 = "MOD_04 // DATA STRUCTURES"
-MOD05 = "MOD_05 // CORE ALGORITHMS"
-MOD06 = "MOD_06 // THE GRID"
+# Macro strings must match constants.js module.macro values exactly
+MOD01 = "MOD_01 // BAZELE"
+MOD02 = "MOD_02 // CONTROL"
+MOD03 = "MOD_03 // ELEMENTARI"
+MOD04 = "MOD_04 // VECTORI"
+MOD05 = "MOD_05 // MATRICE"
+MOD06 = "MOD_05 // MATRICE"  # grid lessons belong to the same frontend module
+
+COMMUNITY_SEED_USERS = [
+    {"username": "alex_cpp",  "email": "alex_cpp@seed.cb",  "password": "Seed1234"},
+    {"username": "py_novice", "email": "py_novice@seed.cb", "password": "Seed1234"},
+    {"username": "Mira_dev",  "email": "mira_dev@seed.cb",  "password": "Seed1234"},
+]
+
+COMMUNITY_SEED_QUESTIONS = [
+    {
+        "author": "alex_cpp",
+        "lesson_slug": "the-kernel",
+        "body": (
+            "De ce îmi apare 'segmentation fault' când accesez arr[n]? "
+            "Vectorul C++ are n=5 elemente dar scriu arr[5] = 0. "
+            "Compilatorul nu aruncă nicio excepție la compilare — cum pot depana?"
+        ),
+    },
+    {
+        "author": "py_novice",
+        "lesson_slug": "memory-allocator",
+        "body": (
+            "Python 3 îmi dă AttributeError: 'NoneType' object has no attribute 'append'. "
+            "Am scris: lista = None / lista.append(1) — unde greșesc? "
+            "Cum inițializez corect o listă goală?"
+        ),
+    },
+    {
+        "author": "Mira_dev",
+        "lesson_slug": "io-streams",
+        "body": (
+            "cin >> x nu citește linia întreagă cu spații în C++. "
+            "De ce se oprește la primul spațiu și cum citesc tot șirul cu getline?"
+        ),
+    },
+    {
+        "author": "alex_cpp",
+        "lesson_slug": "logic-gates",
+        "body": (
+            "Bucla while(n != 0) rulează la infinit în C++ când pornesc cu n=0. "
+            "Nu intră deloc în buclă și programul se blochează — cum testez condiția inițială?"
+        ),
+    },
+    {
+        "author": "py_novice",
+        "lesson_slug": "the-alu",
+        "body": (
+            "De ce print(1/2) afișează 0.5 în Python 3 dar 0 în Python 2? "
+            "Trebuie să scriu float(1)/2 mereu sau există o altă soluție?"
+        ),
+    },
+]
 
 # fmt: off
 LESSON_RECORDS = [
@@ -574,6 +630,52 @@ LESSON_RECORDS = [
 # fmt: on
 
 
+async def seed_community(session):
+    """Seed 3 dummy users + 5 discussion questions. Idempotent."""
+    user_map = {}
+    for u in COMMUNITY_SEED_USERS:
+        result = await session.execute(select(User).where(User.username == u["username"]))
+        existing = result.scalar_one_or_none()
+        if existing:
+            user_map[u["username"]] = existing.id
+        else:
+            new_user = User(
+                username=u["username"],
+                email=u["email"],
+                hashed_password=hash_password(u["password"]),
+            )
+            session.add(new_user)
+            await session.flush()
+            user_map[u["username"]] = new_user.id
+            print(f"  Seeded community user: {u['username']}")
+
+    for q_data in COMMUNITY_SEED_QUESTIONS:
+        # Skip if a question with this body already exists (idempotent)
+        existing_q = await session.execute(
+            select(Question).where(Question.body == q_data["body"])
+        )
+        if existing_q.scalar_one_or_none():
+            continue
+
+        lesson = await session.execute(
+            select(Lesson).where(Lesson.slug == q_data["lesson_slug"])
+        )
+        lesson_obj = lesson.scalar_one_or_none()
+        if not lesson_obj:
+            print(f"  Skipping question — lesson slug '{q_data['lesson_slug']}' not found")
+            continue
+
+        question = Question(
+            user_id=user_map[q_data["author"]],
+            lesson_id=lesson_obj.id,
+            body=q_data["body"],
+        )
+        session.add(question)
+        print(f"  Seeded community question by {q_data['author']}")
+
+    await session.commit()
+
+
 async def seed(update: bool = False, clear: bool = False):
     engine = create_async_engine(DATABASE_URL, echo=False)
     async with engine.begin() as conn:
@@ -643,6 +745,7 @@ async def seed(update: bool = False, clear: bool = False):
                 session.add(question)
 
         await session.commit()
+        await seed_community(session)
 
     await engine.dispose()
     print("Done. Database seeded successfully.")

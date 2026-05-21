@@ -297,7 +297,7 @@ html:not(.dark) .nav-tab-active {
 
 /* Dot grid on page background */
 html:not(.dark) .bg-fx::before {
-  background-image: radial-gradient(circle, #b8ad9e 1px, transparent 1px);
+  background-image: radial-gradient(circle, #a89e8e 1px, transparent 1px);
   background-size: 28px 28px;
 }
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pathlib import Path
 import json
 
-router = APIRouter(prefix="/api", tags=["curriculum"])
+router = APIRouter(prefix="/curriculum", tags=["curriculum"])
 
 LESSONS_DIR = Path(__file__).parent.parent / "lessons"
 
@@ -15,7 +15,7 @@ MODULE_DIRS = {
 }
 
 
-@router.get("/lessons/{lesson_id}")
+@router.get("/{lesson_id}")
 async def get_lesson_json(lesson_id: str):
     """Return lesson JSON content from the file-based curriculum layer."""
     parts = lesson_id.split("_")

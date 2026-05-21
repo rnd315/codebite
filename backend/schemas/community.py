@@ -1,10 +1,17 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class QuestionCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+
     lesson_id: int
-    body: str
+    body: str = Field(min_length=10, max_length=1000)
+
+    @field_validator('body', mode='before')
+    @classmethod
+    def strip_str(cls, v):
+        return v.strip() if isinstance(v, str) else v
 
 
 class QuestionOut(BaseModel):
@@ -21,7 +28,14 @@ class QuestionOut(BaseModel):
 
 
 class AnswerCreate(BaseModel):
-    body: str
+    model_config = ConfigDict(extra='forbid')
+
+    body: str = Field(min_length=5, max_length=2000)
+
+    @field_validator('body', mode='before')
+    @classmethod
+    def strip_str(cls, v):
+        return v.strip() if isinstance(v, str) else v
 
 
 class AnswerOut(BaseModel):

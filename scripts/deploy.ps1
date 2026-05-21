@@ -214,7 +214,8 @@ $remoteCmd = @"
 set -e
 echo '-- fix ownership'
 sudo chown -R www-data:www-data $REMOTE_PATH/dist $REMOTE_PATH/app
-sudo chmod -R u+rwX $REMOTE_PATH/dist $REMOTE_PATH/app
+sudo chmod 755 $REMOTE_PATH
+sudo chmod -R u+rwX,o+rX $REMOTE_PATH/dist $REMOTE_PATH/app
 cd $REMOTE_PATH/app
 echo '-- venv'
 if [ ! -d venv ]; then
@@ -240,6 +241,7 @@ else
 fi
 "@
 
+$remoteCmd = $remoteCmd -replace "`r`n", "`n"
 $remoteOutput = Invoke-SSH $remoteCmd
 Write-Host $remoteOutput
 

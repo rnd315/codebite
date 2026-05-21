@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import client from '../api/client'
 import useStore from '../store/useStore'
 import MacroModule, { BusConnector } from '../components/pathway/MacroModule'
 import HeroBanner from '../components/layout/HeroBanner'
 import Sidebar from '../components/layout/Sidebar'
-import { ModuleSkeleton } from '../components/ui/Skeleton'
+import CyberLoader from '../components/ui/CyberLoader'
 import { MODULES } from '../utils/constants'
 
 function computeModuleStatus(modIndex, lessons, completedIds) {
@@ -71,68 +72,72 @@ export default function Pathway() {
     return modLessons.length > 0 && modLessons.every((l) => completedIds.has(l.id))
   }).length
 
-  if (loading) {
-    return (
-      <div className="pt-0 pb-6 space-y-2">
-        {MODULES.map((mod) => (
-          <ModuleSkeleton key={mod.id} />
-        ))}
-      </div>
-    )
-  }
-
-  if (error) {
-    return <p className="text-center text-destructive py-10 text-sm">{error}</p>
-  }
-
   return (
-    <div className="pt-0 pb-6">
-      <HeroBanner lessons={lessons} completedCount={completedCount} currentLesson={currentLesson} />
+    <>
+      <CyberLoader visible={loading} />
 
-      {/* Skill-tree section header */}
-      <div className="mb-5 flex items-end justify-between px-1">
-        <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-            ~/skill-tree
-          </div>
-          <h2 className="mt-1 font-mono text-lg font-bold text-foreground">
-            <span className="text-accent">$</span> tree --macro
-          </h2>
-        </div>
-        <div className="text-right">
-          <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-            {t('pathway.cleared')}
-          </div>
-          <div className="font-mono text-sm font-bold text-foreground">
-            {String(clearedModules).padStart(2, '0')} / {String(MODULES.length).padStart(2, '0')}
-          </div>
-        </div>
-      </div>
+      {error && !loading && (
+        <p className="text-center text-destructive py-10 text-sm">{error}</p>
+      )}
 
-      <div className="flex gap-6 items-start">
-        {/* Macro modules column */}
-        <div className="flex-1 min-w-0 space-y-2">
-          {MODULES.map((mod, idx) => {
-            const modLessons = lessons.filter((l) => l.macro === mod.macro)
-            const modStatus = mod.demoStatus ?? computeModuleStatus(idx, lessons, completedIds)
-            return (
-              <div key={mod.id}>
-                <MacroModule
-                  module={mod}
-                  lessons={modLessons}
-                  completedIds={completedIds}
-                  moduleStatus={modStatus}
-                  lang={lang}
-                />
-                {idx < MODULES.length - 1 && <BusConnector />}
+      <AnimatePresence>
+        {!loading && !error && (
+          <motion.div
+            key="dashboard"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="pt-0 pb-6"
+          >
+            <HeroBanner lessons={lessons} completedCount={completedCount} currentLesson={currentLesson} />
+
+            {/* Skill-tree section header */}
+            <div className="mb-5 flex items-end justify-between px-1">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                  ~/skill-tree
+                </div>
+                <h2 className="mt-1 font-mono text-lg font-bold text-foreground">
+                  <span className="text-accent">$</span> tree --macro
+                </h2>
               </div>
-            )
-          })}
-        </div>
+              <div className="text-right">
+                <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                  {t('pathway.cleared')}
+                </div>
+                <div className="font-mono text-sm font-bold text-foreground">
+                  {String(clearedModules).padStart(2, '0')} / {String(MODULES.length).padStart(2, '0')}
+                </div>
+              </div>
+            </div>
 
-        {/* Sidebar */}
-        <Sidebar completedToday={0} latestQuestion={latestQuestion} />
-      </div>
-    </div>
+            <div className="flex gap-6 items-start">
+              {/* Macro modules column */}
+              <div className="flex-1 min-w-0 space-y-2">
+                {MODULES.map((mod, idx) => {
+                  const modLessons = lessons.filter((l) => l.macro === mod.macro)
+                  const modStatus = mod.demoStatus ?? computeModuleStatus(idx, lessons, completedIds)
+                  return (
+                    <div key={mod.id}>
+                      <MacroModule
+                        module={mod}
+                        lessons={modLessons}
+                        completedIds={completedIds}
+                        moduleStatus={modStatus}
+                        lang={lang}
+                      />
+                      {idx < MODULES.length - 1 && <BusConnector />}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Sidebar */}
+              <Sidebar completedToday={0} latestQuestion={latestQuestion} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

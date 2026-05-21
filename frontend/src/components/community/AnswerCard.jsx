@@ -30,7 +30,7 @@ export default function AnswerCard({ answer, questionAuthorId, onAccept }) {
           )}
           {canAccept && (
             <Button variant="success" size="sm" onClick={() => onAccept(answer.id)}>
-              {t('community.accept')}
+              {t('community.markUseful')}
             </Button>
           )}
         </div>

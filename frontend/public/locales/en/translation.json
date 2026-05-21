@@ -16,21 +16,7 @@
     "title": ">_ calibrate.exe",
     "question": "Are you completely new to programming?",
     "beginnerBtn": "Start from scratch",
-    "beginnerHint": "// Begin at MOD_01 — Foundations",
-    "advancedBtn": "Test my skills",
-    "advancedHint": "// Run placement_test.exe — skip to MOD_02 if pass",
-    "testLabel": "placement_test.exe",
-    "nextQuestion": "> next_question",
-    "submitTest": "> submit_test",
-    "pass": "[PASS]",
-    "fail": "[FAIL]",
-    "correctCount": "{{correct}} / {{total}} correct",
-    "passMessagePre": "MOD_01 marked complete. You start at",
-    "passModule": "MOD_02 // LOOPS & LOGIC",
-    "failMessagePre": "Begin at",
-    "failModule": "MOD_01 // FOUNDATIONS",
-    "failMessagePost": "to build a solid base.",
-    "launchBtn": "> launch_dashboard"
+    "beginnerHint": "// Begin at MOD_01 — Foundations"
   },
   "nav": {
     "pathway": "Pathway",
@@ -101,14 +87,16 @@
     "topDebuggers": "Top debuggers · today",
     "latestCommunity": "Debugger's Guild",
     "noQuestions": "No questions yet. Be the first!",
-    "jumpToFeed": "> DEBUG & EARN"
+    "jumpToFeed": "> DEBUG & EARN",
+    "askQuestion": "Do you have a question? Ask the community",
+    "askBtn": ">_ ASK A QUESTION"
   },
   "modules": {
-    "mod_01": { "title": "BAZELE",      "subtitle": "Syntax · Types · I/O · Operators" },
-    "mod_02": { "title": "CONTROL",     "subtitle": "If/Else · While · For" },
-    "mod_03": { "title": "ELEMENTARI",  "subtitle": "Max·Min · Digits · Primes · Euclid" },
-    "mod_04": { "title": "VECTORI",     "subtitle": "1D Arrays · Sorting · Searching" },
-    "mod_05": { "title": "MATRICE",     "subtitle": "2D Matrices · Diagonals" }
+    "mod_01": { "title": "FUNDAMENTALS", "subtitle": "Syntax · Types · I/O · Operators" },
+    "mod_02": { "title": "CONTROL",      "subtitle": "If/Else · While · For" },
+    "mod_03": { "title": "ELEMENTARY",   "subtitle": "Max·Min · Digits · Primes · Euclid" },
+    "mod_04": { "title": "VECTORS",      "subtitle": "1D Arrays · Sorting · Searching" },
+    "mod_05": { "title": "MATRICES",     "subtitle": "2D Matrices · Diagonals" }
   },
   "module": {
     "backToDashboard": "back to dashboard",
@@ -222,6 +210,7 @@
     "answer": "Answer",
     "answers": "Answers",
     "accept": "Accept Answer",
+    "markUseful": "Mark as Useful Solution",
     "accepted": "✓ Accepted",
     "acceptedInfo": "Accepting an answer gives the author +1 💠 Token",
     "noQuestions": "No questions yet. Be the first to ask!",
