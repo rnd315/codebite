@@ -12,26 +12,6 @@ export default function Footer() {
           {t('footer.copyright')}
         </p>
 
-        {/* Center — links */}
-        <div className="flex items-center gap-4 font-mono">
-          <a
-            href="/README.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground transition-colors"
-          >
-            {t('footer.docs')}
-          </a>
-          <span className="text-hairline">·</span>
-          <a
-            href="https://github.com/rnd315/codebite"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground transition-colors"
-          >
-            {t('footer.github')}
-          </a>
-        </div>
 
         {/* Right — author */}
         <div className="font-mono text-center lg:text-right space-y-0.5">

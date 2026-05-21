@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import useStore from './store/useStore'
 import client from './api/client'
 import Layout from './components/layout/Layout'
+import LayoutFull from './components/layout/LayoutFull'
 import OnboardingModal from './components/layout/OnboardingModal'
 import PageTransition from './components/ui/PageTransition'
 import Home from './pages/Home'
@@ -84,7 +85,7 @@ export default function App() {
         } />
         <Route path="/curriculum/:lessonId" element={
           <ProtectedRoute>
-            <Layout><PageTransition><CurriculumLesson /></PageTransition></Layout>
+            <LayoutFull><CurriculumLesson /></LayoutFull>
           </ProtectedRoute>
         } />
         <Route path="/community" element={

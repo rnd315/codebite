@@ -90,7 +90,7 @@ function SingleQuestion({ q, onCorrect, onWrong, lang }) {
   )
 }
 
-export default function CurriculumQuiz({ quiz, onComplete }) {
+export default function CurriculumQuiz({ quiz, onComplete, onWrongAnswer }) {
   const lang      = useStore((s) => s.lang)
   const codeLang  = useStore((s) => s.codeLang)
   const lives     = useStore((s) => s.lives)
@@ -126,9 +126,8 @@ export default function CurriculumQuiz({ quiz, onComplete }) {
   }
 
   const handleWrong = () => {
-    // Deduct locally for immediate feedback
     setLives(Math.max(0, lives - 1))
-    // Sync with backend so community token rewards reflect the real count
+    onWrongAnswer?.()   // trigger glitch animation in parent
     client.post('/auth/me/deduct-token')
       .then(({ data }) => syncFromUser(data))
       .catch(() => {})
