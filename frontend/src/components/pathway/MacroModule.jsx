@@ -128,7 +128,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
       {isLocked && (
         <div
           className="absolute inset-0 z-20 grid place-items-center overflow-hidden rounded-2xl"
-          style={{ background: 'linear-gradient(180deg, oklch(0.10 0.03 265 / 70%) 0%, oklch(0.08 0.03 265 / 92%) 100%)' }}
+          style={{ background: 'var(--overlay-locked)' }}
         >
           <div aria-hidden className="absolute inset-0 backdrop-blur-md" />
           <div aria-hidden className="absolute inset-0 bg-grid opacity-30" />
@@ -155,7 +155,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
       {isFogOfWar && (
         <motion.div
           className="absolute inset-0 z-20 grid place-items-center overflow-hidden rounded-2xl"
-          style={{ background: 'linear-gradient(180deg, oklch(0.07 0.04 265 / 88%) 0%, oklch(0.05 0.04 265 / 97%) 100%)' }}
+          style={{ background: 'var(--overlay-fog)' }}
           animate={{ opacity: [0.88, 1, 0.88] }}
           transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
         >
@@ -189,7 +189,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
           </span>
         </div>
         {(isUnlocked || isActive) && (
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-accent-foreground">
+          <span className="module-badge-active inline-flex items-center gap-1.5 rounded-md bg-accent px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-accent-foreground">
             <Terminal size={10} strokeWidth={3} />
             {t('module.statusActive')}
           </span>
@@ -285,7 +285,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
 
           {(isUnlocked || isActive) && (
             <button
-              className="pointer-events-none group inline-flex items-center justify-between gap-2 rounded-md bg-accent px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent-foreground"
+              className="boot-module-btn pointer-events-none group inline-flex items-center justify-between gap-2 rounded-md bg-accent px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent-foreground"
             >
               <span className="inline-flex items-center gap-2">
                 <Play size={12} className="fill-accent-foreground" strokeWidth={0} />

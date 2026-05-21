@@ -63,7 +63,7 @@ function ViewSwitcher({ isLearning, isCommunity, isLeaderboard, navigate, t }) {
           onClick={() => navigate(path)}
           className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
             active
-              ? 'bg-gradient-to-r from-primary/90 to-accent/90 text-background shadow-[0_0_20px_-6px_var(--glow-primary)]'
+              ? 'nav-tab-active bg-gradient-to-r from-primary/90 to-accent/90 text-background shadow-[0_0_20px_-6px_var(--glow-primary)]'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -233,7 +233,7 @@ export default function Navbar() {
           <button
             onClick={toggleTheme}
             className="grid h-9 w-9 place-items-center rounded-full glass text-foreground transition-colors hover:bg-secondary"
-            title={theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
+            title={theme === 'dark' ? 'Switch to Paper' : 'Switch to Dark'}
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>

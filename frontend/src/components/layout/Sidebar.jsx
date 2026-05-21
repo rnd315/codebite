@@ -27,7 +27,7 @@ export default function Sidebar({ completedToday = 0, latestQuestion = null }) {
         <p className="text-xs text-muted-foreground mb-3">{t('sidebar.questGoal')}</p>
         <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-700"
+            className="sidebar-progress-fill h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-700"
             style={{ width: `${Math.min(completedToday, 1) * 100}%` }}
           />
         </div>
@@ -47,7 +47,7 @@ export default function Sidebar({ completedToday = 0, latestQuestion = null }) {
                 0{i + 1}
               </span>
               <span className="flex-1 text-sm font-semibold text-foreground">{helper.name}</span>
-              <span className="font-mono text-[11px] font-bold text-primary">+{helper.xp}</span>
+              <span className="sidebar-xp-value font-mono text-[11px] font-bold text-primary">+{helper.xp}</span>
             </div>
           ))}
         </div>
