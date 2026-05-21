@@ -81,29 +81,36 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
   const navigate = useNavigate()
   const { t } = useTranslation()
 
+  const isUnlocked = moduleStatus === 'unlocked'
   const isActive = moduleStatus === 'active'
   const isCompleted = moduleStatus === 'completed'
   const isLocked = moduleStatus === 'locked'
+  const isPartial = moduleStatus === 'partial'
   const isFogOfWar = moduleStatus === 'fog_of_war'
+  const isClickable = isUnlocked || isActive || isCompleted || isPartial
 
+  const lessonCount = module.lessons?.length ?? lessons.length
   const completedCount = lessons.filter((l) => completedIds.has(l.id)).length
-  const xpTotal = lessons.length * 10
-  const eta = Math.ceil(lessons.length * 0.25)
-  const progressPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0
+  const xpTotal = lessonCount * 10
+  const eta = Math.ceil(lessonCount * 0.25)
+  const progressPct = lessonCount > 0 ? Math.round((completedCount / lessonCount) * 100) : 0
+  const unlockedCount = module.lessons?.filter((l) => l.status === 'unlocked').length ?? 0
 
   const moduleTitle = t(`modules.${module.id}.title`)
 
   return (
     <motion.div
-      onClick={isActive || isCompleted ? () => navigate(`/module/${module.slug}`) : undefined}
-      whileHover={isActive ? { scale: 1.01 } : isCompleted ? { scale: 1.005 } : {}}
+      onClick={isClickable ? () => navigate(`/module/${module.slug}`) : undefined}
+      whileHover={isUnlocked || isActive ? { scale: 1.01 } : isCompleted ? { scale: 1.005 } : isPartial ? { scale: 1.005 } : {}}
       transition={{ duration: 0.18, ease: 'easeOut' }}
       className={`relative overflow-hidden rounded-2xl border bg-background/60 transition-all ${
-        isActive
+        isUnlocked || isActive
           ? 'border-accent/40 cursor-pointer hover:border-accent/70 hover:shadow-[0_0_50px_-8px_var(--glow-accent)]'
           : isCompleted
             ? 'border-hairline cursor-pointer hover:border-success/40 hover:shadow-[0_0_30px_-8px_var(--glow-accent)]'
-            : 'border-hairline cursor-not-allowed'
+            : isPartial
+              ? 'border-streak/40 cursor-pointer hover:border-streak/70 hover:shadow-[0_0_40px_-8px_var(--glow-primary)]'
+              : 'border-hairline cursor-not-allowed'
       }`}
     >
 
@@ -181,10 +188,16 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
             rack / {module.id.toLowerCase()}
           </span>
         </div>
-        {isActive && (
+        {(isUnlocked || isActive) && (
           <span className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-accent-foreground">
             <Terminal size={10} strokeWidth={3} />
             {t('module.statusActive')}
+          </span>
+        )}
+        {isPartial && (
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-streak/40 bg-background/60 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-streak">
+            <Signal size={10} strokeWidth={2.5} />
+            PARTIAL ACCESS
           </span>
         )}
         {isCompleted && (
@@ -211,7 +224,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
       <div className="relative z-10 grid gap-6 p-5 md:grid-cols-[auto_1fr_auto] md:items-center">
 
         {/* Left: Mainframe badge */}
-        <MainframeBadge module={module} isActive={isActive} isCompleted={isCompleted} />
+        <MainframeBadge module={module} isActive={isUnlocked || isActive} isCompleted={isCompleted} />
 
         {/* Center: Module info */}
         <div className="min-w-0">
@@ -227,20 +240,27 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
 
           {/* Meta strip */}
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-            {[
-              { label: t('module.metaUnits'), value: String(lessons.length) },
-              { label: t('gamification.xp'), value: xpTotal >= 1000 ? `${(xpTotal / 1000).toFixed(1)}K` : String(xpTotal) },
-              { label: t('module.metaEta'), value: `${eta}h` },
-            ].map((m) => (
+            {(isPartial
+              ? [
+                  { label: 'UNLOCKED', value: `${unlockedCount}/${lessonCount}`, highlight: true },
+                  { label: t('gamification.xp'), value: xpTotal >= 1000 ? `${(xpTotal / 1000).toFixed(1)}K` : String(xpTotal) },
+                  { label: t('module.metaEta'), value: `${eta}h` },
+                ]
+              : [
+                  { label: t('module.metaUnits'), value: String(lessonCount) },
+                  { label: t('gamification.xp'), value: xpTotal >= 1000 ? `${(xpTotal / 1000).toFixed(1)}K` : String(xpTotal) },
+                  { label: t('module.metaEta'), value: `${eta}h` },
+                ]
+            ).map((m) => (
               <div key={m.label} className="flex items-baseline gap-1.5">
                 <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground">{m.label}</span>
-                <span className="font-mono text-sm font-bold text-foreground">{m.value}</span>
+                <span className={`font-mono text-sm font-bold ${m.highlight ? 'text-streak' : 'text-foreground'}`}>{m.value}</span>
               </div>
             ))}
           </div>
 
           {/* Progress bar */}
-          {(isActive || isCompleted) && lessons.length > 0 && (
+          {(isUnlocked || isActive || isCompleted) && lessonCount > 0 && (
             <div className="mt-4 flex items-center gap-3">
               <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-secondary/60">
                 <div
@@ -263,13 +283,24 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
             isCompleted={isCompleted}
           />
 
-          {isActive && (
+          {(isUnlocked || isActive) && (
             <button
               className="pointer-events-none group inline-flex items-center justify-between gap-2 rounded-md bg-accent px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent-foreground"
             >
               <span className="inline-flex items-center gap-2">
                 <Play size={12} className="fill-accent-foreground" strokeWidth={0} />
                 &gt; boot_module
+              </span>
+              <ChevronRight size={13.5} strokeWidth={3} />
+            </button>
+          )}
+          {isPartial && (
+            <button
+              className="pointer-events-none inline-flex items-center justify-between gap-2 rounded-md border border-streak/40 bg-background/40 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-streak"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Play size={12} strokeWidth={2} />
+                &gt; partial_access
               </span>
               <ChevronRight size={13.5} strokeWidth={3} />
             </button>

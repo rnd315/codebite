@@ -104,12 +104,11 @@
     "jumpToFeed": "> DEBUG & EARN"
   },
   "modules": {
-    "mod_01": { "title": "FOUNDATIONS",      "subtitle": "Syntax · Variables · I/O · Operators" },
-    "mod_02": { "title": "CONTROL FLOW",     "subtitle": "If/Else · While · For" },
-    "mod_03": { "title": "NUMBER CRUNCHING", "subtitle": "Digits · Primes · Euclid" },
-    "mod_04": { "title": "DATA STRUCTURES",  "subtitle": "Arrays 1D · Traversal" },
-    "mod_05": { "title": "CORE ALGORITHMS",  "subtitle": "Linear Search · Bubble Sort" },
-    "mod_06": { "title": "THE GRID",         "subtitle": "Matrices 2D · Diagonals" }
+    "mod_01": { "title": "BAZELE",      "subtitle": "Syntax · Types · I/O · Operators" },
+    "mod_02": { "title": "CONTROL",     "subtitle": "If/Else · While · For" },
+    "mod_03": { "title": "ELEMENTARI",  "subtitle": "Max·Min · Digits · Primes · Euclid" },
+    "mod_04": { "title": "VECTORI",     "subtitle": "1D Arrays · Sorting · Searching" },
+    "mod_05": { "title": "MATRICE",     "subtitle": "2D Matrices · Diagonals" }
   },
   "module": {
     "backToDashboard": "back to dashboard",
@@ -340,5 +339,28 @@
     "theme": "Theme",
     "dark": "Dark",
     "light": "Light"
+  },
+  "lessons": {
+    "mod01_01": "Introduction to C++",
+    "mod01_02": "Data Types & Variables",
+    "mod01_03": "I/O Streams",
+    "mod01_04": "Operators & Logic",
+    "mod02_01": "Conditional Branches",
+    "mod02_02": "The While Loop",
+    "mod02_03": "The For Loop",
+    "mod03_01": "Maximums & Minimums",
+    "mod03_02": "Digit Extraction",
+    "mod03_03": "Divisibility & Primes",
+    "mod03_04": "Euclidean Algorithm",
+    "mod04_01": "Introduction & Allocation",
+    "mod04_02": "Insertions & Deletions",
+    "mod04_03": "Property Verification",
+    "mod04_04": "Array Sorting (Bubble Sort)",
+    "mod04_05": "Selection & Insertion Sort",
+    "mod04_06": "Binary Search",
+    "mod04_07": "Array Merging",
+    "mod04_08": "Frequency Arrays",
+    "mod05_01": "Matrix Declarations",
+    "mod05_02": "Square Matrices"
   }
 }

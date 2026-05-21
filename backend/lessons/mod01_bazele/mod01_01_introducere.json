@@ -1,0 +1,15 @@
+﻿{
+  "id": "mod01_01",
+  "title": "Introducere în C++",
+  "interactiveComponent": "MissionKernelCout",
+  "theory": {
+    "architect": "",
+    "hacker": "",
+    "socrates": ""
+  },
+  "quiz": {
+    "question": "",
+    "options": [],
+    "correctAnswerIndex": 0
+  }
+}

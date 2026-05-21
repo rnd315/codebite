@@ -72,11 +72,18 @@ codebite/
 │   │   ├── lesson.py
 │   │   ├── progress.py
 │   │   └── community.py
+│   ├── lessons/                 # JSON curriculum layer (file-based, no DB)
+│   │   ├── mod01_bazele/        # mod01_01_introducere.json … mod01_04_operatori.json
+│   │   ├── mod02_control/       # mod02_01_if.json … mod02_03_for.json
+│   │   ├── mod03_elementari/    # mod03_01_maxmin.json … mod03_04_euclid.json
+│   │   ├── mod04_vectori/       # mod04_01_intro.json … mod04_08_frecventa.json
+│   │   └── mod05_matrice/       # mod05_01_intro.json, mod05_02_patratice.json
 │   ├── routers/
 │   │   ├── auth.py
-│   │   ├── lessons.py
+│   │   ├── lessons.py           # DB-backed lesson list + detail
 │   │   ├── progress.py
-│   │   └── community.py
+│   │   ├── community.py
+│   │   └── curriculum.py        # File-based GET /api/lessons/{lesson_id}
 │   ├── schemas/
 │   ├── crud/
 │   ├── core/
@@ -103,14 +110,14 @@ codebite/
 │   │   │   ├── ui/              # Button, Card, Badge, Modal, ProgressBar
 │   │   │   ├── layout/          # Navbar, Sidebar, MobileNav, HeroBanner
 │   │   │   ├── gamification/    # TokenDisplay, UptimeCounter, XPBar
-│   │   │   ├── pathway/         # MacroModule, CircuitPathway
+│   │   │   ├── pathway/         # MacroModule (5 states), CircuitPathway
 │   │   │   ├── visualizer/      # AlgorithmVisualizer, ArrayBar, StepControls
 │   │   │   ├── lesson/          # CodeBlock, QuizQuestion, MarkdownCodeBlock
 │   │   │   └── community/       # QuestionCard, AnswerCard, AnswerForm
 │   │   ├── pages/
 │   │   │   ├── Home.jsx         # Login/register — redirects to /onboarding after register
 │   │   │   ├── Onboarding.jsx   # Beginner check + placement test
-│   │   │   ├── Pathway.jsx      # Macro Dashboard: 3 server-rack modules
+│   │   │   ├── Pathway.jsx      # Macro Dashboard: 5 server-rack modules
 │   │   │   ├── ModuleView.jsx   # Micro-pathway: circuit-board lesson nodes
 │   │   │   ├── Lesson.jsx       # Theory + visualizer + quiz
 │   │   │   ├── Community.jsx    # Debugger's Guild Q&A feed
@@ -121,7 +128,7 @@ codebite/
 │   │   │   └── useVisualizer.js
 │   │   └── utils/
 │   │       ├── algorithms.js
-│   │       └── constants.js     # MAX_TOKENS, MODULES array
+│   │       └── constants.js     # MAX_TOKENS, MODULES array (5 modules, demoStatus)
 │   ├── index.html
 │   ├── vite.config.js
 │   └── tailwind.config.js
@@ -154,8 +161,10 @@ Backend column names are **unchanged** (`lives`, `streak`). The frontend relabel
 - `users.last_active` — date only; streak resets if no activity for 24h.
 - `answers.accepted` → answerer gets +1 token (capped at 5). Core community-gamification hook.
 - `quiz_questions.explanation_en/ro` — shown on wrong answer. Required for jury accuracy criterion.
-- Frontend `MODULES` constant (in `utils/constants.js`) maps lesson `category` → Macro Module.
-  No DB change needed — grouping is computed on the frontend.
+- Frontend `MODULES` constant (in `utils/constants.js`) defines the 5-module curriculum structure
+  and carries `demoStatus`, `lessonIds`, and (for mod_04) `unlockedLessonIds`. The dashboard
+  renders from this constant, not from DB grouping. DB lessons are still served via `/lessons`
+  but are decoupled from the module display states.
 
 ---
 
@@ -207,7 +216,7 @@ Backend column names are **unchanged** (`lives`, `streak`). The frontend relabel
   ↓ beginner         → /pathway (start at MOD_01)
   ↓ advanced + pass  → /pathway (MOD_01 pre-completed, MOD_02 active)
 
-/pathway             → Macro Dashboard (3 server-rack Macro Modules)
+/pathway             → Macro Dashboard (5 server-rack Macro Modules)
   ↓ > boot_module    → /module/:moduleSlug
 
 /module/:moduleSlug  → Micro-pathway (circuit-board node list)
@@ -222,25 +231,47 @@ Backend column names are **unchanged** (`lives`, `streak`). The frontend relabel
 
 ## 7. Macro Module Specs (Pathway Page)
 
-3 modules shown as large server-rack cards stacked vertically:
+5 modules shown as server-rack cards. Structure is defined entirely in `frontend/src/utils/constants.js` — the `MODULES` array is the single source of truth for the curriculum layout.
 
-| ID | Label | Subtitle | categories (in DB) |
+### Module Definitions
+
+| ID | Label | Subtitle EN | Lesson IDs | `demoStatus` |
+|---|---|---|---|---|
+| mod_01 | `MOD_01 // BAZELE` | Syntax · Types · I/O · Operators | mod01_01 … mod01_04 | `unlocked` |
+| mod_02 | `MOD_02 // CONTROL` | If/Else · While · For | mod02_01 … mod02_03 | `unlocked` |
+| mod_03 | `MOD_03 // ELEMENTARI` | Max·Min · Digits · Primes · Euclid | mod03_01 … mod03_04 | `locked` |
+| mod_04 | `MOD_04 // VECTORI` | 1D Arrays · Sorting · Searching | mod04_01 … mod04_08 | `partial` |
+| mod_05 | `MOD_05 // MATRICE` | 2D Matrices · Diagonals | mod05_01, mod05_02 | `fog_of_war` |
+
+### Module Status System
+
+`demoStatus` on each MODULES entry overrides runtime computation in `Pathway.jsx`:
+
+```js
+const modStatus = mod.demoStatus ?? computeModuleStatus(idx, lessons, completedIds)
+```
+
+| Status | Visual | Button | Navigation |
 |---|---|---|---|
-| mod_01 | `MOD_01 // FOUNDATIONS` | Variables · I/O · Branches | `basics` |
-| mod_02 | `MOD_02 // LOOPS & LOGIC` | While · For · Arrays | `arrays & strings` |
-| mod_03 | `MOD_03 // ALGORITHMS` | Sorting · Searching | `sorting`, `searching` |
+| `unlocked` | Cyan accent border + glow | `> boot_module` | `/module/{slug}` |
+| `active` | Cyan accent border + glow | `> boot_module` | `/module/{slug}` |
+| `completed` | Hairline border | `> review_module` | `/module/{slug}` |
+| `partial` | Amber `streak` border + hover glow | `> partial_access` | `/module/{slug}` |
+| `locked` | Dark blur overlay + Lock icon | disabled | none |
+| `fog_of_war` | Heavy backdrop blur + pulsing `?` | `// signal_lost` | none |
 
-**Module status rules:**
-- `active` — previous module completed (or first module) AND this module not complete
-- `completed` — all lessons in module completed
-- `locked` — previous module not completed
+### Partial Module (mod_04)
 
-**Active card:** cyan border glow (`border-neon-cyan/50 shadow-[0_0_25px_rgba(34,211,238,0.12)]`),
-lesson list visible, footer button `> boot_module` navigates to `/module/{slug}`.
+The `partial` state renders the card normally (no overlay) but:
+- Metadata shows `X/Y UNLOCKED` in amber instead of a unit count.
+- Only the lesson IDs listed in `unlockedLessonIds: ['mod04_01', 'mod04_04']` are playable in the circuit pathway.
 
-**Locked card:** fog-of-war overlay (`backdrop-blur-[2px] bg-slate-950/75`), large Lock icon.
+### JSON Content Layer
 
-**Completed card:** emerald border, `> review_module` button.
+All lesson content is served from `backend/lessons/`. Each file is named `{lesson_id}_{slug}.json`.
+`mod01_01_introducere.json` carries the full Neural Matrix boilerplate with `interactiveComponent`,
+`theory` (architect/hacker/socrates variants), and `quiz`. All other files are stubs (`status: "empty"`)
+pending content authoring.
 
 ---
 
@@ -311,13 +342,14 @@ Are you a complete beginner?
 
 ## 12. API Endpoints
 
+### Auth & Gamification (DB-backed, JWT required)
 ```
 GET    /health
 POST   /auth/register         → redirect client to /onboarding
 POST   /auth/login            → redirect client to /pathway
 GET    /auth/me
-GET    /lessons
-GET    /lessons/{slug}        → includes quiz_questions array
+GET    /lessons               → DB lesson list (legacy grouping)
+GET    /lessons/{slug}        → DB lesson detail + quiz_questions
 GET    /progress
 POST   /progress/{lesson_id}  → +10 XP, updates uptime
 POST   /progress/{lesson_id}/quiz → correct: +5 XP; wrong: −1 token
@@ -327,6 +359,16 @@ POST   /community/questions
 POST   /community/answers/{question_id}
 PATCH  /community/answers/{answer_id}/accept → +1 token answerer, +15 XP
 ```
+
+### Curriculum JSON layer (file-based, no auth required)
+```
+GET    /api/lessons/{lesson_id}   → reads backend/lessons/{module_dir}/{lesson_id}_*.json
+                                     e.g. /api/lessons/mod01_01 → mod01_01_introducere.json
+                                     Returns 404 if lesson_id not found.
+```
+
+`lesson_id` format: `mod01_01`, `mod04_04`, etc. Module is derived from the `mod0X` prefix.
+Implemented in `backend/routers/curriculum.py`.
 
 ---
 

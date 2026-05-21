@@ -114,7 +114,7 @@ export default function Pathway() {
         <div className="flex-1 min-w-0 space-y-2">
           {MODULES.map((mod, idx) => {
             const modLessons = lessons.filter((l) => l.macro === mod.macro)
-            const modStatus = computeModuleStatus(idx, lessons, completedIds)
+            const modStatus = mod.demoStatus ?? computeModuleStatus(idx, lessons, completedIds)
             return (
               <div key={mod.id}>
                 <MacroModule

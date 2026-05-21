@@ -104,12 +104,11 @@
     "jumpToFeed": "> DEPANEAZĂ & CÂȘTIGĂ"
   },
   "modules": {
-    "mod_01": { "title": "FUNDAMENTE",         "subtitle": "Sintaxă · Variabile · I/E · Operatori" },
-    "mod_02": { "title": "CONTROL FLUX",       "subtitle": "If/Else · While · For" },
-    "mod_03": { "title": "CALCUL NUMERIC",     "subtitle": "Cifre · Prime · Euclid" },
-    "mod_04": { "title": "STRUCTURI DE DATE",  "subtitle": "Vectori 1D · Parcurgere" },
-    "mod_05": { "title": "ALGORITMI DE BAZĂ",  "subtitle": "Căutare Liniară · Sortare Bulă" },
-    "mod_06": { "title": "MATRICEA",           "subtitle": "Matrice 2D · Diagonale" }
+    "mod_01": { "title": "BAZELE",      "subtitle": "Sintaxă · Tipuri · I/O · Operatori" },
+    "mod_02": { "title": "CONTROL",     "subtitle": "If/Else · While · For" },
+    "mod_03": { "title": "ELEMENTARI",  "subtitle": "Max·Min · Cifre · Prime · Euclid" },
+    "mod_04": { "title": "VECTORI",     "subtitle": "Vectori 1D · Sortare · Căutare" },
+    "mod_05": { "title": "MATRICE",     "subtitle": "Matrice 2D · Diagonale" }
   },
   "module": {
     "backToDashboard": "înapoi la panou",
@@ -340,5 +339,28 @@
     "theme": "Temă",
     "dark": "Întunecat",
     "light": "Luminos"
+  },
+  "lessons": {
+    "mod01_01": "Introducere în C++",
+    "mod01_02": "Tipuri de date și Variabile",
+    "mod01_03": "Intrări/ieșiri în C++",
+    "mod01_04": "Operatori și Operații logice",
+    "mod02_01": "Structuri alternative",
+    "mod02_02": "Structuri repetitive: while",
+    "mod02_03": "Structuri repetitive: for",
+    "mod03_01": "Maxime și minime",
+    "mod03_02": "Cifrele unui număr",
+    "mod03_03": "Divizibilitate și Primalitate",
+    "mod03_04": "Algoritmul lui Euclid",
+    "mod04_01": "Introducere și Alocare",
+    "mod04_02": "Inserări și Ștergeri",
+    "mod04_03": "Verificarea Proprietăților",
+    "mod04_04": "Sortarea Vectorilor (Bubble Sort)",
+    "mod04_05": "Sortare prin Selecție & Inserție",
+    "mod04_06": "Căutarea Binară",
+    "mod04_07": "Interclasarea",
+    "mod04_08": "Vectori de Frecvență",
+    "mod05_01": "Introducere",
+    "mod05_02": "Tablouri pătratice"
   }
 }

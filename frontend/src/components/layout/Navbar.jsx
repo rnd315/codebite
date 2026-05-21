@@ -100,7 +100,7 @@ function UserMenu({ user, onLogout, onAchievements, navigate, t }) {
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center rounded-full ring-2 ring-background px-1.5 py-1 hover:opacity-90 transition-opacity"
-        style={{ background: '#80EF80' }}
+        style={{ background: '#F97316' }}
       >
         <span className="grid h-7 w-7 place-items-center font-mono text-sm font-black text-black">
           {user.username?.[0]?.toUpperCase() ?? '?'}
@@ -177,13 +177,16 @@ export default function Navbar() {
             className="flex items-center gap-2.5 hover:opacity-85 transition-opacity"
           >
             <div className="relative grid h-9 w-9 place-items-center rounded-xl glass">
-              <span className="text-gradient font-mono text-base font-bold leading-none">{'{·}'}</span>
+              <span className="font-mono text-base font-bold leading-none">
+                <span className="text-gradient">{'{'}</span>
+                <span style={{ color: '#F97316' }}>·</span>
+                <span className="text-gradient">{'}'}</span>
+              </span>
               <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_var(--glow-accent)]" />
             </div>
             <div className="flex flex-col leading-none gap-0.5">
               <span className="font-mono text-[15px] font-bold tracking-tight text-foreground">
                 code<span className="text-accent">bite</span>
-                <span className="ml-0.5 inline-block h-1.5 w-1.5 translate-y-[-2px] animate-pulse-soft rounded-full bg-accent align-middle" />
               </span>
               <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground">
                 v0.1 · dev-shell

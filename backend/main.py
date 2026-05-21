@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers import auth, lessons, progress, community
+from routers import auth, lessons, progress, community, curriculum
 
 # Import models so SQLAlchemy registers them with Base.metadata
 import models.user
@@ -38,6 +38,7 @@ app.include_router(auth.router)
 app.include_router(lessons.router)
 app.include_router(progress.router)
 app.include_router(community.router)
+app.include_router(curriculum.router)
 
 
 @app.get("/")

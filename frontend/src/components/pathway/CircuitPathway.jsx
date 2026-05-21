@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Lock, Play } from 'lucide-react'
 
 // SVG coordinate system: viewBox "0 0 100 {height}"
@@ -10,22 +11,15 @@ const NODE_GAP = 160   // px between node centers
 const TOP_PAD = 60
 const BOTTOM_PAD = 50
 
-// Circuit-board line colors per node status — use CSS custom properties
 const COLORS = {
+  unlocked:  'var(--accent)',
   completed: 'var(--success)',
-  active:    'var(--accent)',
   locked:    'var(--hairline)',
 }
 
-function getStatus(lesson, completedIds, allLessons) {
-  if (completedIds.has(lesson.id)) return 'completed'
-  const prev = allLessons.find((l) => l.order_index === lesson.order_index - 1)
-  if (!prev || completedIds.has(prev.id)) return 'active'
-  return 'locked'
-}
-
-export default function CircuitPathway({ lessons, completedIds, lang }) {
+export default function CircuitPathway({ lessons }) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   if (lessons.length === 0) {
     return (
@@ -42,8 +36,6 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
     y: TOP_PAD + idx * NODE_GAP,
   }))
 
-  const statuses = lessons.map((l) => getStatus(l, completedIds, lessons))
-
   return (
     <div className="relative" style={{ height: totalHeight }}>
       {/* SVG: trunk + branch lines + junction dots */}
@@ -57,8 +49,7 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
         {/* Vertical trunk segments between consecutive nodes */}
         {positions.slice(0, -1).map((from, i) => {
           const to = positions[i + 1]
-          const nextStatus = statuses[i + 1]
-          const color = COLORS[nextStatus === 'active' ? 'active' : nextStatus]
+          const color = COLORS[lessons[i + 1].status] ?? COLORS.locked
           return (
             <line
               key={`trunk-${i}`}
@@ -73,8 +64,7 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
 
         {/* Horizontal branch lines from trunk to each node */}
         {positions.map((pos, i) => {
-          const status = statuses[i]
-          const color = COLORS[status === 'active' ? 'active' : status]
+          const color = COLORS[lessons[i].status] ?? COLORS.locked
           return (
             <line
               key={`branch-${i}`}
@@ -89,8 +79,7 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
 
         {/* Junction dots at trunk-branch intersections */}
         {positions.map((pos, i) => {
-          const status = statuses[i]
-          const color = COLORS[status === 'active' ? 'active' : status]
+          const color = COLORS[lessons[i].status] ?? COLORS.locked
           return (
             <circle
               key={`dot-${i}`}
@@ -107,14 +96,13 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
       {/* Lesson nodes — absolutely positioned over SVG */}
       {lessons.map((lesson, idx) => {
         const { x, y } = positions[idx]
-        const status = statuses[idx]
-        const isCompleted = status === 'completed'
-        const isActive = status === 'active'
-        const isLocked = status === 'locked'
-        const title = lang === 'ro' ? lesson.title_ro : lesson.title_en
+        const isPlayable = lesson.status === 'unlocked'
+        const isCompleted = lesson.status === 'completed'
+        const isLocked = lesson.status === 'locked'
+        const title = t(lesson.titleKey)
 
         const handleClick = () => {
-          if (!isLocked) navigate(`/lesson/${lesson.slug}`)
+          if (isPlayable || isCompleted) navigate(`/lesson/${lesson.id}`)
         }
 
         return (
@@ -124,7 +112,7 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
             style={{ left: `${x}%`, top: y, transform: 'translate(-50%, -50%)' }}
           >
             {/* Active node: "tap to enter" label above */}
-            {isActive && (
+            {isPlayable && (
               <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-[0.2em] border border-hairline rounded-full px-2.5 py-0.5 bg-background/60 mb-0.5">
                 tap to enter
               </span>
@@ -140,7 +128,7 @@ export default function CircuitPathway({ lessons, completedIds, lang }) {
               </div>
             )}
 
-            {isActive && (
+            {isPlayable && (
               <div
                 onClick={handleClick}
                 className="w-14 h-14 rounded-full border-2 border-accent bg-accent/10 flex items-center justify-center cursor-pointer node-pulse hover:scale-105 transition-transform"

@@ -46,6 +46,9 @@ Inspirat din estetica uneltelor pentru dezvoltatori — terminale, circuite, ser
 | Auth | **JWT** (python-jose + passlib) | Fără servicii externe |
 | Migrații | **Alembic** | Versionare schemă |
 | Server | **Uvicorn** | ASGI server pentru FastAPI |
+| Conținut lecții | **Fișiere JSON** (`backend/lessons/`) | Strat separat de conținut, fără DB |
+
+**Arhitectură hibridă:** autentificarea, progresul și comunitatea sunt gestionate prin SQLite. Conținutul lecțiilor este servit direct din fișiere JSON (`GET /api/lessons/{lesson_id}`), demonstrând modularitatea sistemului.
 
 ### Infrastructură
 
@@ -113,43 +116,47 @@ Feed hibrid de comunitate în stil terminal, unde greșelile din lecții se tran
 
 ## 🌳 Curricula — Arborele de Cunoaștere
 
+Conținutul lecțiilor este servit din `backend/lessons/` via `GET /api/lessons/{lesson_id}`.
+
 ```
-📦 MOD_01 // FOUNDATIONS
-   Variabile · I/O · Ramificații
-   ├── 📄 Hello, World! — Primul tău program
-   ├── 📄 Variabile și Tipuri de Date
-   └── 📄 Instrucțiuni Condiționale (if / else)
+📦 MOD_01 // BAZELE  [UNLOCKED]
+   Sintaxă · Tipuri · I/O · Operatori
+   ├── 📄 mod01_01 — Introducere în C++   ← boilerplate Neural Matrix complet
+   ├── 📄 mod01_02 — Tipuri de Date
+   ├── 📄 mod01_03 — Intrare / Ieșire
+   └── 📄 mod01_04 — Operatori
 
-📦 MOD_02 // LOOPS & LOGIC
-   While · For · Array-uri
-   ├── 📄 Bucla While
-   ├── 📄 Bucla For
-   └── 📄 Array-uri și Indecși
+📦 MOD_02 // CONTROL  [UNLOCKED]
+   If/Else · While · For
+   ├── 📄 mod02_01 — Instrucțiunea if/else
+   ├── 📄 mod02_02 — Bucla while
+   └── 📄 mod02_03 — Bucla for
 
-📦 MOD_03 // STRINGS & FUNCTIONS
-   Funcții · Recursivitate · Șiruri
-   ├── 📄 Funcții și Parametri
-   ├── 📄 Recursivitate
-   └── 📄 Șiruri de Caractere (Strings)
+📦 MOD_03 // ELEMENTARI  [LOCKED]
+   Max·Min · Cifre · Prime · Euclid
+   ├── 📄 mod03_01 — Maxim și minim
+   ├── 📄 mod03_02 — Prelucrarea cifrelor
+   ├── 📄 mod03_03 — Numere prime
+   └── 📄 mod03_04 — Algoritmul lui Euclid
 
-📦 MOD_04 // DATA STRUCTURES
-   Structuri · Pointeri · STL
-   ├── 📄 Structuri (struct / class)
-   ├── 📄 Pointeri și Memorie
-   └── 📄 Liste și Vectori STL
+📦 MOD_04 // VECTORI  [PARTIAL — 2/8 deblocate]
+   Vectori 1D · Sortare · Căutare
+   ├── 📄 mod04_01 — Introducere vectori        ✅ deblocat
+   ├── 📄 mod04_02 — Inserări și ștergeri       🔒
+   ├── 📄 mod04_03 — Proprietăți                🔒
+   ├── 📄 mod04_04 — Bubble Sort                ✅ deblocat
+   ├── 📄 mod04_05 — Sortare prin selecție      🔒
+   ├── 📄 mod04_06 — Căutare binară             🔒
+   ├── 📄 mod04_07 — Interclasare               🔒
+   └── 📄 mod04_08 — Frecvențe                  🔒
 
-📦 MOD_05 // ALGORITHMS I
-   Sortare · Căutare
-   ├── 📄 Algoritmi de Sortare (Bubble · Selection · QuickSort)
-   └── 📄 Algoritmi de Căutare (Liniară · Binară)
-
-📦 MOD_06 // ALGORITHMS II
-   Programare Dinamică · Grafuri
-   ├── 📄 Programare Dinamică (DP)
-   └── 📄 Grafuri și Parcurgeri (BFS / DFS)
+📦 MOD_05 // MATRICE  [FOG OF WAR]
+   Matrice 2D · Diagonale
+   ├── 📄 mod05_01 — Introducere matrice
+   └── 📄 mod05_02 — Operații pe pătratice
 ```
 
-**Total: 6 Module Macro · 16 Lecții · Limbaje: C++ și Python**
+**Total: 5 Module Macro · 21 Lecții · Limbaj principal: C++**
 
 ---
 
@@ -198,7 +205,8 @@ Parolă   : Demo1234
 ```
 codebite/
 ├── backend/          # FastAPI, SQLAlchemy, Alembic
-│   ├── routers/      # auth, lessons, progress, community
+│   ├── lessons/      # Strat JSON conținut lecții (5 module, 21 fișiere)
+│   ├── routers/      # auth, lessons, progress, community, curriculum
 │   ├── models/       # user, lesson, progress, community
 │   ├── crud/         # operații DB separate de routere
 │   └── seed.py       # date inițiale de demonstrație
@@ -225,7 +233,7 @@ codebite/
 
 | Criteriu | Implementare |
 |---|---|
-| **Modularitate** | Componente izolate `~150 LOC`, un singur responsabil per fișier |
+| **Modularitate** | Componente izolate `~150 LOC`; strat de conținut JSON decuplat de DB (`/api/lessons/{id}`) |
 | **Disciplină Git** | Commit-uri semantice (`feat:`, `fix:`, `refactor:`), CHANGELOG.md automatizat |
 | **Acuratețe științifică** | Vizualizator pas-cu-pas verificabil, explicații la răspunsuri greșite (`explanation_en/ro`) |
 | **Interactivitate** | Sandbox Framer Motion, quiz cu risc de Token, comunitate cu economie de recompense |
