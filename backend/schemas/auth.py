@@ -9,6 +9,10 @@ class RegisterRequest(BaseModel):
     password: str
 
 
+class UpdateProfileRequest(BaseModel):
+    username: str
+
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str

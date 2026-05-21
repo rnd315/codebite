@@ -17,24 +17,12 @@ export default function HeroBanner({ lessons = [], completedCount = 0, currentLe
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl glass-strong p-6 sm:p-8 mb-8">
+    <div className="relative overflow-hidden rounded-3xl glass-strong border border-accent/20 p-6 sm:p-8 mb-8">
 
-      {/* Shimmer border ring */}
+      {/* Subtle corner tint — accent, right side only */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-px rounded-3xl opacity-60 animate-shimmer"
-        style={{
-          background: 'conic-gradient(from 120deg at 50% 50%, transparent 0deg, var(--glow-primary) 90deg, transparent 180deg, var(--glow-accent) 270deg, transparent 360deg)',
-          maskImage: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
-          WebkitMaskComposite: 'xor',
-          maskComposite: 'exclude',
-          padding: 1,
-        }}
-      />
-      {/* Corner halo — top-right */}
-      <div
-        aria-hidden
-        className="absolute -right-20 -top-24 h-72 w-72 rounded-full opacity-40 blur-3xl pointer-events-none"
+        className="absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-20 blur-3xl pointer-events-none"
         style={{ background: 'radial-gradient(closest-side, var(--glow-accent), transparent)' }}
       />
 

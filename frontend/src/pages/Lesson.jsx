@@ -13,6 +13,7 @@ import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import AlgorithmVisualizer from '../components/visualizer/AlgorithmVisualizer'
 import { MODULES } from '../utils/constants'
+import { BADGE_DEFS } from '../utils/badges'
 import LessonStepper from '../components/mission/LessonStepper'
 import { LESSON_FLOWS, LESSON_QUIZ_FALLBACK } from '../utils/lessonFlows'
 
@@ -21,7 +22,7 @@ export default function Lesson() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const lang = useStore((s) => s.lang)
-  const { setXp, setStreak } = useStore()
+  const { setXp, setStreak, unlockBadge, badges } = useStore()
 
   const [lesson, setLesson] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -41,9 +42,24 @@ export default function Lesson() {
     setCompleting(true)
     try {
       await client.post(`/progress/${lesson.id}`, { score: 100, attempts: 1 })
-      const { data: me } = await client.get('/auth/me')
+      const [{ data: me }, { data: progress }] = await Promise.all([
+        client.get('/auth/me'),
+        client.get('/progress'),
+      ])
       setXp(me.xp)
       setStreak(me.streak)
+
+      // Badge: first ever lesson completion
+      unlockBadge('FIRST_PATCH')
+
+      // Badge: all MOD_01 (basics) lessons completed
+      const { data: allLessons } = await client.get('/lessons')
+      const completedIds = new Set(progress.filter((p) => p.completed).map((p) => p.lesson_id))
+      completedIds.add(lesson.id) // include current lesson just completed
+      const mod01Lessons = allLessons.filter((l) => l.category === 'basics')
+      if (mod01Lessons.length > 0 && mod01Lessons.every((l) => completedIds.has(l.id))) {
+        unlockBadge('FOUNDATIONS_MASTER')
+      }
     } catch {
       // mark complete even on API error so user isn't stuck
     } finally {

@@ -5,6 +5,7 @@ import useStore from '../store/useStore'
 import FilterSidebar from '../components/community/FilterSidebar'
 import TicketCard from '../components/community/TicketCard'
 import OpenTicketModal from '../components/community/OpenTicketModal'
+import { TicketSkeleton } from '../components/ui/Skeleton'
 import { GUILD_TICKETS } from '../utils/constants'
 
 function normalizeBounties() {
@@ -42,7 +43,7 @@ function normalizeDiscussions(questions) {
 
 export default function Community() {
   const { t } = useTranslation()
-  const { user, lang } = useStore()
+  const { user, lang, unlockBadge } = useStore()
 
   const [tickets, setTickets] = useState(normalizeBounties)
   const [loading, setLoading] = useState(true)
@@ -61,8 +62,10 @@ export default function Community() {
   const handleSolve = (id) =>
     setTickets((prev) => prev.map((t) => t.id === id ? { ...t, status: 'solved' } : t))
 
-  const handleNewTicket = (ticket) =>
+  const handleNewTicket = (ticket) => {
     setTickets((prev) => [ticket, ...prev])
+    unlockBadge('GUILD_MEMBER')
+  }
 
   const filtered = tickets.filter((ticket) => {
     const topicOk = topicFilter === 'all' || ticket.module === topicFilter
@@ -119,7 +122,9 @@ export default function Community() {
 
         <div className="flex-1 min-w-0">
           {loading ? (
-            <p className="font-mono text-sm text-muted-foreground py-4">{t('common.loading')}</p>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => <TicketSkeleton key={i} />)}
+            </div>
           ) : sorted.length === 0 ? (
             <p className="font-mono text-sm text-muted-foreground py-4">{t('community.noTickets')}</p>
           ) : (

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import useStore from './store/useStore'
 import client from './api/client'
 import Layout from './components/layout/Layout'
+import OnboardingModal from './components/layout/OnboardingModal'
 import PageTransition from './components/ui/PageTransition'
 import Home from './pages/Home'
 import Onboarding from './pages/Onboarding'
@@ -12,6 +13,7 @@ import ModuleView from './pages/ModuleView'
 import Lesson from './pages/Lesson'
 import Community from './pages/Community'
 import Profile from './pages/Profile'
+import Leaderboard from './pages/Leaderboard'
 
 function ProtectedRoute({ children }) {
   const token = useStore((s) => s.token)
@@ -89,8 +91,14 @@ export default function App() {
             <Layout><PageTransition><Profile /></PageTransition></Layout>
           </ProtectedRoute>
         } />
+        <Route path="/leaderboard" element={
+          <ProtectedRoute>
+            <Layout><PageTransition><Leaderboard /></PageTransition></Layout>
+          </ProtectedRoute>
+        } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <OnboardingModal />
     </BrowserRouter>
   )
 }

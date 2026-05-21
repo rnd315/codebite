@@ -6,13 +6,6 @@ import { Lock, Terminal, CheckCircle2, Server, ChevronRight, Play, Signal } from
 function MainframeBadge({ module, isActive, isCompleted }) {
   return (
     <div className="relative flex-shrink-0">
-      {isActive && (
-        <span
-          aria-hidden
-          className="absolute -inset-2 rounded-2xl opacity-70 blur-md animate-pulse-soft pointer-events-none"
-          style={{ background: 'var(--glow-accent)' }}
-        />
-      )}
       <div className={`relative grid h-24 w-24 place-items-center rounded-xl bg-background ring-1 ${
         isActive ? 'ring-accent' : isCompleted ? 'ring-success' : 'ring-hairline'
       }`}>
@@ -123,15 +116,6 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
           backgroundSize: '24px 24px',
         }}
       />
-
-      {/* Active glow border */}
-      {isActive && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -inset-px rounded-2xl opacity-50 blur-2xl"
-          style={{ background: 'var(--glow-accent)' }}
-        />
-      )}
 
       {/* Locked overlay */}
       {isLocked && (

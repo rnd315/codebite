@@ -6,7 +6,7 @@ from dependencies import get_current_user
 from models.user import User
 import crud.community as crud_community
 import crud.users as crud_users
-from constants import XP_PER_ACCEPTED, MAX_LIVES
+from constants import XP_PER_ACCEPTED, XP_PER_BOUNTY, MAX_LIVES
 
 router = APIRouter(prefix="/community", tags=["community"])
 
@@ -19,7 +19,8 @@ async def earn_token(
     if current_user.lives >= MAX_LIVES:
         raise HTTPException(status_code=400, detail="TOKENS_FULL")
     updated = await crud_users.increment_lives(db, current_user)
-    return {"lives": updated.lives}
+    updated = await crud_users.add_xp(db, updated, XP_PER_BOUNTY)
+    return {"lives": updated.lives, "xp": updated.xp}
 
 
 @router.get("/questions", response_model=list[QuestionOut])

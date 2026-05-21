@@ -42,7 +42,8 @@
     "guild": "Comunitate",
     "accountDetails": "Detalii Cont",
     "achievements": "Realizări",
-    "signOut": "Deconectare"
+    "signOut": "Deconectare",
+    "leaderboard": "Clasament"
   },
   "footer": {
     "copyright": "CodeBite © 2026 — InfoEducație Categoria Software Educațional",
@@ -109,6 +110,7 @@
   "mobileNav": {
     "learn": "Învață",
     "community": "Comunitate",
+    "ranks": "Clasament",
     "profile": "Profil"
   },
   "lesson": {
@@ -229,6 +231,7 @@
     "xp": "XP Câștigat",
     "completed": "Lecții Completate",
     "member": "Membru din",
+    "editUsername": "Editează numele de utilizator",
     "recentActivity": "Activitate Recentă",
     "noActivity": "Nicio lecție completată încă. Începe-ți călătoria!"
   },
@@ -248,6 +251,65 @@
       "successMsg": "PATCH APLICAT",
       "failMsg": "COMPILARE EȘUATĂ: no match for operator>>"
     }
+  },
+  "badges": {
+    "title": "Realizări",
+    "subtitle": "Decorațiunile tale de luptă câștigate",
+    "locked": "Blocat",
+    "unlocked": "Deblocat",
+    "FIRST_PATCH": {
+      "name": "Vânător de Bug-uri",
+      "desc": "Ai completat prima ta misiune interactivă",
+      "req": "Completează prima lecție"
+    },
+    "GUILD_MEMBER": {
+      "name": "Networker",
+      "desc": "Te-ai alăturat Breslei Depanatorilor",
+      "req": "Postează o întrebare sau răspuns în Breasla"
+    },
+    "BOUNTY_HUNTER": {
+      "name": "Mercenar",
+      "desc": "Ai rezolvat un tichet bounty și ai câștigat un Token",
+      "req": "Rezolvă un tichet Bounty din Comunitate"
+    },
+    "FOUNDATIONS_MASTER": {
+      "name": "Cavaler Kernel",
+      "desc": "Ai stăpânit toate lecțiile din Modulul 1 — Fundamente",
+      "req": "Completează toate lecțiile din Modulul 1"
+    }
+  },
+  "leaderboard": {
+    "title": ">_ CLASAMENT",
+    "subtitle": "Cei mai buni depanatori după XP",
+    "rank": "LOC",
+    "player": "JUCĂTOR",
+    "xp": "XP",
+    "lessons": "LECȚII",
+    "you": "TU",
+    "headerLabel": "CLASAMENT_GLOBAL --LIVE"
+  },
+  "onboardingWizard": {
+    "step1Title": ">_ INIȚIALIZARE LOCALIZARE",
+    "step2Title": ">_ SELECTARE COMPILATOR MEDIU",
+    "step2Subtitle": "Alege limbajul tău de programare principal. (C++ este standardul recomandat pentru curricula liceală).",
+    "step3Title": ">_ ALEGE PROTOCOLUL COGNITIV NEURAL",
+    "step3Subtitle": "Cum procesează creierul tău codul cel mai eficient?",
+    "step3Note": "* Acest protocol este flexibil și poate fi reconfigurat ulterior din setările contului.",
+    "langRO": "Română",
+    "langEN": "English",
+    "cppLabel": "C++ (Standard ISO)",
+    "cppTag": "Recomandat",
+    "pythonLabel": "Python (Scripting)",
+    "pythonTag": "",
+    "architectTitle": "ARHITECTUL",
+    "architectDesc": "Dă-mi documentație și definiții clare. Învăț cel mai bine prin structură și teorie.",
+    "hackerTitle": "HACKERUL",
+    "hackerDesc": "Predă-mi prin povești și scenarii reale. Analogiile îmi fac conceptele să facă clic.",
+    "socratesTitle": "SOCRATE",
+    "socratesDesc": "Ghidează-mă cu întrebări și indicii. Înțeleg cel mai bine când descopăr, nu când mi se spune direct.",
+    "initBtn": "INIȚIALIZARE ECOSISTEM",
+    "saveBtn": "SALVARE PROTOCOL",
+    "reconfigureBtn": ">_ Reconfigurare Protocol Neural"
   },
   "common": {
     "loading": "Se încarcă...",

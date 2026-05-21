@@ -9,6 +9,8 @@ export default function TicketCard({ ticket, isFiltered = false, onSolve }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language?.startsWith('ro') ? 'ro' : 'en'
   const setLives = useStore((s) => s.setLives)
+  const setXp = useStore((s) => s.setXp)
+  const unlockBadge = useStore((s) => s.unlockBadge)
 
   const [expanded, setExpanded] = useState(false)
   const [result, setResult] = useState(null)   // null | 'success' | 'fail'
@@ -30,11 +32,14 @@ export default function TicketCard({ ticket, isFiltered = false, onSolve }) {
       try {
         const { data } = await client.post('/community/tokens/earn')
         setLives(data.lives)
+        if (data.xp != null) setXp(data.xp)
+        unlockBadge('BOUNTY_HUNTER')
         setResult('success')
         onSolve?.(ticket.id)
       } catch (err) {
         if (err.response?.status === 400 && err.response?.data?.detail === 'TOKENS_FULL') {
           setTokensFull(true)
+          unlockBadge('BOUNTY_HUNTER')
           setResult('success')
           onSolve?.(ticket.id)
         }

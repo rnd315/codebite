@@ -1,11 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Map, MessageCircle, User } from 'lucide-react'
+import { Map, MessageCircle, User, BarChart2 } from 'lucide-react'
 
 const TABS = [
-  { path: '/pathway', icon: Map, key: 'mobileNav.learn' },
-  { path: '/community', icon: MessageCircle, key: 'mobileNav.community' },
-  { path: '/profile', icon: User, key: 'mobileNav.profile' },
+  { path: '/pathway',     icon: Map,          key: 'mobileNav.learn' },
+  { path: '/community',   icon: MessageCircle, key: 'mobileNav.community' },
+  { path: '/leaderboard', icon: BarChart2,     key: 'mobileNav.ranks' },
+  { path: '/profile',     icon: User,          key: 'mobileNav.profile' },
 ]
 
 export default function MobileNav() {

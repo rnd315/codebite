@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
-from schemas.auth import RegisterRequest, LoginRequest, TokenResponse, UserResponse
+from schemas.auth import RegisterRequest, LoginRequest, TokenResponse, UserResponse, UpdateProfileRequest
 from dependencies import get_current_user
 from models.user import User
 import crud.users as crud_users
@@ -33,4 +33,18 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserResponse)
 async def me(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     user = await crud_users.apply_token_regen(db, current_user)
+    return user
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_me(
+    body: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if body.username != current_user.username:
+        existing = await crud_users.get_by_username(db, body.username)
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already taken")
+    user = await crud_users.update_username(db, current_user, body.username)
     return user

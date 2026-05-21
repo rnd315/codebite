@@ -101,3 +101,29 @@ Toate sesiunile de lucru sunt inregistrate automat la fiecare backup.
         Write-Host "CHANGELOG.md actualizat: entry adaugat pentru $DateStamp"
     }
 }
+
+# -- Push to dev branch on GitHub ------------------------------------------
+Write-Host ""
+Write-Host "Pushing to GitHub (dev)..."
+
+$CurrentBranch = git -C $ProjectRoot rev-parse --abbrev-ref HEAD 2>&1
+if ($CurrentBranch -ne "dev") {
+    Write-Host "WARNING: current branch is '$CurrentBranch', not 'dev'. Switching to dev..."
+    git -C $ProjectRoot checkout dev 2>&1 | Out-Null
+}
+
+git -C $ProjectRoot add -A 2>&1 | Out-Null
+$Status = git -C $ProjectRoot status --porcelain 2>&1
+if ($Status) {
+    git -C $ProjectRoot commit -m "chore: backup $Timestamp" 2>&1 | Out-Null
+    Write-Host "Committed local changes."
+} else {
+    Write-Host "No local changes to commit."
+}
+
+$PushResult = git -C $ProjectRoot push origin dev 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "Pushed to origin/dev successfully."
+} else {
+    Write-Host "Push failed: $PushResult"
+}

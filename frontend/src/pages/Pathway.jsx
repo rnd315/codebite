@@ -5,6 +5,7 @@ import useStore from '../store/useStore'
 import MacroModule, { BusConnector } from '../components/pathway/MacroModule'
 import HeroBanner from '../components/layout/HeroBanner'
 import Sidebar from '../components/layout/Sidebar'
+import { ModuleSkeleton } from '../components/ui/Skeleton'
 import { MODULES } from '../utils/constants'
 
 function computeModuleStatus(modIndex, lessons, completedIds) {
@@ -72,8 +73,10 @@ export default function Pathway() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 font-mono text-sm text-muted-foreground">
-        {t('common.loading')}
+      <div className="pt-0 pb-6 space-y-2">
+        {MODULES.map((mod) => (
+          <ModuleSkeleton key={mod.id} />
+        ))}
       </div>
     )
   }

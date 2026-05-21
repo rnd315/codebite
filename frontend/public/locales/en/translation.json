@@ -42,7 +42,8 @@
     "guild": "Community",
     "accountDetails": "Account Details",
     "achievements": "Achievements",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "leaderboard": "Ranks"
   },
   "footer": {
     "copyright": "CodeBite © 2026 — InfoEducație Educational Software Category",
@@ -109,6 +110,7 @@
   "mobileNav": {
     "learn": "Learn",
     "community": "Community",
+    "ranks": "Ranks",
     "profile": "Profile"
   },
   "lesson": {
@@ -229,6 +231,7 @@
     "xp": "XP Earned",
     "completed": "Lessons Completed",
     "member": "Member since",
+    "editUsername": "Edit username",
     "recentActivity": "Recent Activity",
     "noActivity": "No lessons completed yet. Start your journey!"
   },
@@ -248,6 +251,65 @@
       "successMsg": "PATCH APPLIED",
       "failMsg": "COMPILATION FAILED: no match for operator>>"
     }
+  },
+  "badges": {
+    "title": "Achievements",
+    "subtitle": "Your earned battle decorations",
+    "locked": "Locked",
+    "unlocked": "Unlocked",
+    "FIRST_PATCH": {
+      "name": "Bug Hunter",
+      "desc": "Completed your first interactive mission",
+      "req": "Complete the first lesson"
+    },
+    "GUILD_MEMBER": {
+      "name": "Networker",
+      "desc": "Joined the Debugger's Guild community",
+      "req": "Post a question or reply in the Guild"
+    },
+    "BOUNTY_HUNTER": {
+      "name": "Mercenary",
+      "desc": "Solved a bounty ticket and earned a Token",
+      "req": "Solve a Community Bounty ticket"
+    },
+    "FOUNDATIONS_MASTER": {
+      "name": "Kernel Knight",
+      "desc": "Mastered all Module 1 — Foundations lessons",
+      "req": "Complete all lessons in Module 1"
+    }
+  },
+  "leaderboard": {
+    "title": ">_ LEADERBOARD",
+    "subtitle": "Top debuggers ranked by XP",
+    "rank": "RANK",
+    "player": "PLAYER",
+    "xp": "XP",
+    "lessons": "LESSONS",
+    "you": "YOU",
+    "headerLabel": "GLOBAL_RANKS --LIVE"
+  },
+  "onboardingWizard": {
+    "step1Title": ">_ INITIALIZE LOCALIZATION",
+    "step2Title": ">_ SELECT ENVIRONMENT COMPILER",
+    "step2Subtitle": "Choose your primary programming language. (C++ is the recommended standard for high school curriculum).",
+    "step3Title": ">_ CHOOSE NEURAL COGNITIVE PROTOCOL",
+    "step3Subtitle": "How does your brain process code most efficiently?",
+    "step3Note": "* This protocol is flexible and can be reconfigured later from your account settings.",
+    "langRO": "Română",
+    "langEN": "English",
+    "cppLabel": "C++ (Standard ISO)",
+    "cppTag": "Recommended",
+    "pythonLabel": "Python (Scripting)",
+    "pythonTag": "",
+    "architectTitle": "THE ARCHITECT",
+    "architectDesc": "Give me raw documentation and definitions. I learn best through structure and theory first.",
+    "hackerTitle": "THE HACKER",
+    "hackerDesc": "Teach me through stories and real scenarios. Analogies click faster than abstract rules.",
+    "socratesTitle": "THE SOCRATES",
+    "socratesDesc": "Lead me with hints and questions. I figure things out best when guided, not just given the answer.",
+    "initBtn": "INITIALIZE ECOSYSTEM",
+    "saveBtn": "SAVE PROTOCOL",
+    "reconfigureBtn": ">_ Reconfigure Neural Protocol"
   },
   "common": {
     "loading": "Loading...",

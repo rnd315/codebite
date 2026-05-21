@@ -70,6 +70,13 @@ async def add_xp(db: AsyncSession, user: User, amount: int) -> User:
     return user
 
 
+async def update_username(db: AsyncSession, user: User, username: str) -> User:
+    user.username = username
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
 async def update_streak_and_xp(db: AsyncSession, user: User, xp_gain: int) -> User:
     """Called on lesson completion. Updates streak based on last_active date."""
     today = date.today()

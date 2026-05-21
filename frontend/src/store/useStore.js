@@ -10,7 +10,7 @@ const useStore = create(
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
       logout: () =>
-        set({ user: null, token: null, lives: 5, streak: 0, xp: 0 }),
+        set({ user: null, token: null, lives: 5, streak: 0, xp: 0, badges: [] }),
 
       // Gamification state — synced from backend on login/progress
       lives: 5,
@@ -36,6 +36,11 @@ const useStore = create(
           return { lives: Math.min(s.lives + earned, 5) }
         }),
 
+      // Badges — persisted, unlocked client-side
+      badges: [],
+      unlockBadge: (id) =>
+        set((s) => s.badges.includes(id) ? {} : { badges: [...s.badges, id] }),
+
       // Preferences — persisted to localStorage
       theme: 'dark',
       toggleTheme: () =>
@@ -44,17 +49,27 @@ const useStore = create(
       codeLang: 'cpp',
       setCodeLang: (codeLang) => set({ codeLang }),
 
-      lang: 'en',
+      lang: 'ro',
       setLang: (lang) => set({ lang }),
+
+      // Personalization — persisted
+      learningProtocol: null,
+      isOnboarded: false,
+      showProtocolModal: false,
+      setLearningProtocol: (learningProtocol) => set({ learningProtocol }),
+      setIsOnboarded: (isOnboarded) => set({ isOnboarded }),
+      setShowProtocolModal: (showProtocolModal) => set({ showProtocolModal }),
     }),
     {
       name: 'codebite-store',
-      // Only persist token and preferences — user data re-fetched from API
       partialize: (s) => ({
         token: s.token,
         theme: s.theme,
         codeLang: s.codeLang,
         lang: s.lang,
+        learningProtocol: s.learningProtocol,
+        isOnboarded: s.isOnboarded,
+        badges: s.badges,
       }),
     }
   )

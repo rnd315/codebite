@@ -1,10 +1,11 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useRef, useState, useEffect } from 'react'
-import { Sun, Moon, Zap, Users, GraduationCap, Hexagon, User, Trophy, LogOut, ChevronDown } from 'lucide-react'
+import { Sun, Moon, Zap, Users, GraduationCap, Hexagon, User, Trophy, LogOut, ChevronDown, Brain, BarChart2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import useStore from '../../store/useStore'
 import useAuth from '../../hooks/useAuth'
 import { MAX_TOKENS } from '../../utils/constants'
+import AchievementsModal from '../gamification/AchievementsModal'
 
 // ── Shared sub-components (reused in main row + overflow rows) ────────────────
 
@@ -48,42 +49,37 @@ function UIPill({ lang, setLang }) {
   )
 }
 
-function ViewSwitcher({ isLearning, isCommunity, activeTab, navigate, t }) {
+function ViewSwitcher({ isLearning, isCommunity, isLeaderboard, navigate, t }) {
+  const tabs = [
+    { icon: GraduationCap, label: t('nav.learning'),   path: '/pathway',     active: isLearning },
+    { icon: Users,         label: t('nav.guild'),       path: '/community',   active: isCommunity },
+    { icon: BarChart2,     label: t('nav.leaderboard'), path: '/leaderboard', active: isLeaderboard },
+  ]
   return (
-    <div className={`relative inline-flex items-center rounded-full glass p-1 transition-shadow duration-300 ${isCommunity ? 'shadow-[0_0_40px_-6px_var(--glow-primary)]' : ''}`}>
-      {/* Sliding gradient thumb */}
-      <div
-        className="absolute inset-y-1 rounded-full bg-gradient-to-r from-primary/90 to-accent/90 shadow-[0_0_30px_-4px_var(--glow-primary)] transition-transform duration-300"
-        style={{
-          width: 'calc(50% - 4px)',
-          transform: activeTab === 0 ? 'translateX(2px)' : 'translateX(calc(100% + 6px))',
-        }}
-      />
-      <button
-        onClick={() => navigate('/pathway')}
-        className={`relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-          isLearning ? 'text-background' : 'text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        <GraduationCap size={14} />
-        {t('nav.learning')}
-      </button>
-      <button
-        onClick={() => navigate('/community')}
-        className={`relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-          isCommunity ? 'text-background' : 'text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        <Users size={14} />
-        {t('nav.guild')}
-      </button>
+    <div className="inline-flex items-center rounded-full glass p-1 gap-0.5">
+      {tabs.map(({ icon: Icon, label, path, active }) => (
+        <button
+          key={path}
+          onClick={() => navigate(path)}
+          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+            active
+              ? 'bg-gradient-to-r from-primary/90 to-accent/90 text-background shadow-[0_0_20px_-6px_var(--glow-primary)]'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Icon size={14} />
+          {label}
+        </button>
+      ))}
     </div>
   )
 }
 
-function UserMenu({ user, onLogout, navigate, t }) {
+function UserMenu({ user, onLogout, onAchievements, navigate, t }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
+  const setShowProtocolModal = useStore((s) => s.setShowProtocolModal)
+  const badges = useStore((s) => s.badges)
 
   useEffect(() => {
     function handleClick(e) {
@@ -95,21 +91,21 @@ function UserMenu({ user, onLogout, navigate, t }) {
 
   const menuItems = [
     { icon: User,   label: t('nav.accountDetails'), action: () => { navigate('/profile'); setOpen(false) } },
-    { icon: Trophy, label: t('nav.achievements'),   action: () => { navigate('/profile'); setOpen(false) } },
-    { icon: LogOut, label: t('nav.signOut'),         action: () => { onLogout(); setOpen(false) }, danger: true },
+    { icon: Trophy, label: t('nav.achievements'), badge: badges.length > 0 ? badges.length : null, action: () => { onAchievements(); setOpen(false) } },
+    { icon: LogOut, label: t('nav.signOut'), action: () => { onLogout(); setOpen(false) }, danger: true },
   ]
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative flex items-center gap-1.5 rounded-full bg-gradient-to-br from-primary to-accent text-xs font-black text-background ring-2 ring-background pl-1 pr-2 py-1 hover:opacity-90 transition-opacity"
+        className="flex items-center rounded-full ring-2 ring-background px-1.5 py-1 hover:opacity-90 transition-opacity"
+        style={{ background: '#80EF80' }}
       >
-        <span className="grid h-7 w-7 place-items-center rounded-full">
+        <span className="grid h-7 w-7 place-items-center font-mono text-sm font-black text-black">
           {user.username?.[0]?.toUpperCase() ?? '?'}
         </span>
-        <ChevronDown size={11} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-        <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-streak ring-2 ring-background" />
+        <ChevronDown size={10} strokeWidth={2.5} className={`-ml-1 text-black/60 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
@@ -121,17 +117,24 @@ function UserMenu({ user, onLogout, navigate, t }) {
           </div>
           {/* Items */}
           <div className="py-1">
-            {menuItems.map(({ icon: Icon, label, action, danger }) => (
-              <button
-                key={label}
-                onClick={action}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-secondary/60 ${
-                  danger ? 'text-destructive hover:text-destructive' : 'text-foreground'
-                }`}
-              >
-                <Icon size={14} className="flex-shrink-0" />
-                <span>{label}</span>
-              </button>
+            {menuItems.map(({ icon: Icon, label, action, danger, dividerBefore, badge }) => (
+              <div key={label}>
+                {dividerBefore && <div className="mx-4 my-1 border-t border-hairline" />}
+                <button
+                  onClick={action}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-secondary/60 ${
+                    danger ? 'text-destructive hover:text-destructive' : 'text-foreground'
+                  }`}
+                >
+                  <Icon size={14} className="flex-shrink-0" />
+                  <span className="font-mono text-xs flex-1 text-left">{label}</span>
+                  {badge != null && (
+                    <span className="font-mono text-[10px] font-bold text-accent bg-accent/15 rounded-full px-1.5 py-0.5">
+                      {badge}
+                    </span>
+                  )}
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -148,16 +151,18 @@ export default function Navbar() {
   const { t } = useTranslation()
   const { theme, toggleTheme, lang, setLang, codeLang, setCodeLang, user, lives, streak } = useStore()
   const { logout } = useAuth()
+  const [showAchievements, setShowAchievements] = useState(false)
 
   const handleLogout = () => { logout(); navigate('/') }
 
   const isLearning = pathname === '/pathway' || pathname.startsWith('/lesson') || pathname.startsWith('/module')
   const isCommunity = pathname === '/community'
-  const activeTab = isCommunity ? 1 : 0
+  const isLeaderboard = pathname === '/leaderboard'
 
-  const switcherProps = { isLearning, isCommunity, activeTab, navigate, t }
+  const switcherProps = { isLearning, isCommunity, isLeaderboard, navigate, t }
 
   return (
+    <>
     <nav className="sticky top-0 z-40 border-b border-border/60 bg-background/60 backdrop-blur-xl">
 
       {/* ── Main row ─────────────────────────────────────────────────────── */}
@@ -168,7 +173,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => navigate('/pathway')}
             className="flex items-center gap-2.5 hover:opacity-85 transition-opacity"
           >
             <div className="relative grid h-9 w-9 place-items-center rounded-xl glass">
@@ -232,7 +237,13 @@ export default function Navbar() {
 
           {/* Avatar dropdown */}
           {user && (
-            <UserMenu user={user} onLogout={handleLogout} navigate={navigate} t={t} />
+            <UserMenu
+              user={user}
+              onLogout={handleLogout}
+              onAchievements={() => setShowAchievements(true)}
+              navigate={navigate}
+              t={t}
+            />
           )}
         </div>
       </div>
@@ -249,5 +260,7 @@ export default function Navbar() {
       </div>
 
     </nav>
+    {showAchievements && <AchievementsModal onClose={() => setShowAchievements(false)} />}
+    </>
   )
 }
