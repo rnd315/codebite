@@ -233,5 +233,3 @@ codebite/
 | **Explicabilitate** | Orice funcție poate fi parcursă în 30 de secunde; API auto-documentat via Swagger |
 
 ---
-
-*CodeBite — construit cu ❤️ pentru InfoEducație România 2026.*
