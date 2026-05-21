@@ -82,6 +82,8 @@
     "resumeBtn": "RESUME_LESSON"
   },
   "sidebar": {
+    "askQuestion": "Ask the Community",
+    "askBtn": ">_ Ask a Question",
     "dailyQuest": "Daily quest",
     "questGoal": "Finish 1 lesson",
     "topDebuggers": "Top debuggers · today",

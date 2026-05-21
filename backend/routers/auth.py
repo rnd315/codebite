@@ -69,6 +69,18 @@ async def change_password(
     await crud_users.update_password(db, current_user, body.new_password)
 
 
+@router.post("/me/deduct-token", response_model=UserResponse)
+@limiter.limit("30/minute")
+async def deduct_token(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Called by file-based curriculum quiz on wrong answer to keep lives in sync."""
+    user = await crud_users.decrement_lives(db, current_user)
+    return user
+
+
 @router.delete("/me", status_code=204)
 @limiter.limit("3/minute")
 async def delete_me(

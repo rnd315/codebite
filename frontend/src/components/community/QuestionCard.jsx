@@ -9,6 +9,7 @@ import AnswerForm from './AnswerForm'
 export default function QuestionCard({ question, onAnswerAccepted }) {
   const { t } = useTranslation()
   const user = useStore((s) => s.user)
+  const syncFromUser = useStore((s) => s.syncFromUser)
   const [expanded, setExpanded] = useState(false)
   const [answers, setAnswers] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -37,6 +38,13 @@ export default function QuestionCard({ question, onAnswerAccepted }) {
   const handleAccept = async (answerId) => {
     const { data } = await client.patch(`/community/answers/${answerId}/accept`)
     setAnswers((prev) => prev.map((a) => (a.id === answerId ? data : a)))
+    // Sync fresh lives/xp from backend so the token reward reflects correctly
+    try {
+      const { data: me } = await client.get('/auth/me')
+      syncFromUser(me)
+    } catch {
+      // non-critical — UI continues normally
+    }
     onAnswerAccepted?.()
   }
 

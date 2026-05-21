@@ -82,6 +82,8 @@
     "resumeBtn": "REIA_LECȚIA"
   },
   "sidebar": {
+    "askQuestion": "Întreabă Comunitatea",
+    "askBtn": ">_ Pune o Întrebare",
     "dailyQuest": "Misiunea zilnică",
     "questGoal": "Completează 1 lecție",
     "topDebuggers": "Top depanatori · azi",

@@ -18,8 +18,14 @@ const RANK_STYLES = {
 export default function Leaderboard() {
   const { t } = useTranslation()
   const { user, xp } = useStore()
+  const completedCurriculumLessons = useStore((s) => s.completedCurriculumLessons)
 
-  const realPlayer = { username: user?.username ?? 'you', xp, lessons: null, isYou: true }
+  const realPlayer = {
+    username: user?.username ?? 'you',
+    xp,
+    lessons: completedCurriculumLessons.length || null,
+    isYou: true,
+  }
 
   const merged = [...MOCK_PLAYERS, realPlayer]
     .sort((a, b) => b.xp - a.xp)

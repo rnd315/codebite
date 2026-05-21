@@ -20,7 +20,8 @@ function StatCard({ icon: Icon, value, label, iconClass }) {
 export default function Profile() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { user, lives, streak, syncFromUser, setUser, setShowProtocolModal, logout } = useStore()
+  const { user, lives, streak, xp, syncFromUser, setUser, setShowProtocolModal, logout } = useStore()
+  const completedCurriculumLessons = useStore((s) => s.completedCurriculumLessons)
   const [completedCount, setCompletedCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -49,7 +50,8 @@ export default function Profile() {
           client.get('/progress'),
         ])
         syncFromUser(me)
-        setCompletedCount(progress.filter((p) => p.completed).length)
+        const dbCompleted = progress.filter((p) => p.completed).length
+        setCompletedCount(dbCompleted + completedCurriculumLessons.length)
       } finally {
         setLoading(false)
       }
@@ -191,24 +193,32 @@ export default function Profile() {
       {/* Stats grid */}
       <div>
         <h2 className="text-base font-semibold mb-3">{t('profile.stats')}</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <StatCard
             icon={Hexagon}
             value={`${lives}/${MAX_TOKENS}`}
-            label={t('profile.lives')}
+            label="Tokens"
             iconClass="text-primary"
           />
           <StatCard
             icon={Zap}
             value={streak}
-            label={t('profile.streak')}
-            iconClass="text-accent"
+            label="Uptime (zile)"
+            iconClass="text-streak"
           />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
           <StatCard
             icon={BookOpen}
             value={completedCount}
             label={t('profile.completed')}
             iconClass="text-success"
+          />
+          <StatCard
+            icon={Brain}
+            value={xp.toLocaleString()}
+            label="XP total"
+            iconClass="text-accent"
           />
         </div>
       </div>

@@ -5,46 +5,219 @@
   "theory": {
     "ro": {
       "cpp": {
-        "architect": "### >_ [SYSTEM SPEC]: Structura unui program C++\n\nUn program C++ parcurge patru etape: **preprocesare**, **compilare**, **linking** si **executie**. Preprocesorul copiaza declaratiile din `<iostream>` in unitatea de compilare. Compilatorul traduce `.cpp` in cod obiect `.o`. Linker-ul combina obiectele si produce executabilul.\n\nFiecare program C++ necesita exact o functie `main()` cu semnatura `int main()`. Lipsa ei genereaza `undefined reference to main`. Fiecare instructiune se termina cu `;` -- omiterea produce `error: expected ; before [token]`.\n\nObiectul `cout` este un stream de iesire conectat la `stdout`. Operatorul de insertie `<<` trimite date in stream. Operatorul corect este `<<`, nu `>>` -- `cout >> text` nu compileaza, `>>` apartine lui `cin`. Absenta `#include <iostream>` genereaza `error: cout was not declared in this scope`.\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Primul program!\" << \"\\n\";\n    cout << \"Tab: \\t | Newline: \\n\" << \"\\n\";\n    return 0;\n}\n```\n\n**Avertisment tehnic:** `endl` insereaza newline si apeleaza `flush()` pe buffer -- operatie I/O separata, costisitoare in bucle mari. Preferati `'\\n'` in probleme de concurs cu output voluminos. Ghilimelele nechise produc `error: missing terminating character`. Evitati `using namespace std;` in fisiere header -- preferati `std::cout` explicit pentru portabilitate.",
-        "hacker": "### >_ [ALERT]: Pipeline C++ -- patru etape pana la executie\n\nProgramul tau nu ruleaza direct din sursa. Trece prin: preprocesare -> compilare -> linking -> executie. Prima etapa activeaza la `#include <iostream>` -- injectand declaratiile stream-ului de I/O. Compilatorul emite cod obiect. Linker-ul asambleaza binar executabil cu un singur entry point: `main()`.\n\nFara `main()` -- linker-ul arunca `undefined reference to main` si executia nu porneste. Fiecare instructiune necesita `;` la final -- compilatorul opreste cu `expected ; before [token]`. Bug clasic: `cout >> text` in loc de `cout << text`. Operatorul `>>` e al lui `cin` -- directie inversata, eroare de compilare.\n\nAlt fail frecvent: `#include <iostream>` lipsa -- `cout was not declared in this scope`. Ghilimele deschise fara pereche -- `missing terminating character`. Secventele de escape `'\\n'` si `'\\t'` sunt procesate la build-time.\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Output activat.\" << \"\\n\";\n    cout << \"Escape: tab=\\t newline=\\n\" << \"\\n\";\n    return 0;\n}\n```\n\n**Optimizare competitiva:** `endl` forteaza flush la fiecare apel -- in bucle cu mii de iteratii, latenta se acumuleaza. Inlocuiti cu `'\\n'`. Combinati cu `ios::sync_with_stdio(false)` si `cin.tie(NULL)` pentru viteza maxima -- dezactiveaza sincronizarea C/C++ si poate injumatati timpul de I/O pe input-uri mari.",
-        "socrates": "### >_ [QUERY]: De ce programul tau are nevoie de un contract cu OS-ul?\n\nGandeste-te: de ce compilatorul refuza instructiuni scrise direct in fisier, in afara oricarei functii? Sistemul de operare are nevoie de un contract explicit -- o adresa de start bine definita. Acel contract se numeste `main()`.\n\nInainte ca OS-ul sa apeleze `main()`, codul tau trece prin trei filtre: preprocesorul (extinde `#include <iostream>` in declaratii concrete), compilatorul (transforma C++ in cod masina), linker-ul (combina totul intr-un executabil). Daca uiti `;` la finalul unei instructiuni -- compilatorul opreste cu `expected ; before [token]`.\n\nDe ce `cout << text` si nu `cout >> text`? Gandeste-te la directie: `<<` inseamna trimite spre stanga, spre canal. `>>` inseamna extrage din canal spre variabila -- asta e operatia lui `cin`. Schimbarea directiei este o eroare de compilare imediata.\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Buna ziua!\" << \"\\n\";\n    cout << \"Tab: \\t si newline: \\n incluse.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Insight tehnic:** `endl` este echivalent cu `'\\n'` plus `flush()` -- forteaza scrierea imediata a buffer-ului, util in debugging, costisitor in productie. Absenta `#include <iostream>` face `cout` invizibil pentru compilator; ghilimelele nechise produc erori de tokenizare. Semicolonul nu este optional -- C++ delimiteaza instructiunile prin `;`, nu prin indentare sau newline, spre deosebire de Python."
+        "architect": {
+          "pages": [
+            "### Primul tau semnal\n\nUn program este o **lista de pasi** pe care computerul ii urmeaza in ordine -- exact ca o reteta de clatite. Inainte de orice calcule, trebuie sa stie cum sa vorbeasca cu tine. In C++, comanda care afiseaza text pe ecran se numeste `cout`.",
+            "### O regula simpla, dar importanta\n\nIn C++, fiecare instructiune trebuie sa se termine cu `;` (punct si virgula). Gandeste-te ca este **punctul de la finalul frazei** -- fara el, computerul nu stie unde se termina ordinul si se blocheaza."
+          ],
+          "cascade": "### Codul, pas cu pas\n\nHai sa vedem cum ii ordonam computerului sa afiseze un mesaj pe ecran:\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Salut, lume!\" << \"\\n\";\n    cout << \"Acesta e primul meu program.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Ce face fiecare linie:**\n- `#include <iostream>` -- spune computerului 'am nevoie de uneltele pentru afisat pe ecran'\n- `using namespace std;` -- o scurtatura ca sa nu scriem cod extra de fiecare data\n- `int main() { }` -- cutia principala in care sta tot codul important\n- `cout << \"Salut!\" << \"\\n\";` -- impinge textul pe ecran; `\"\\n\"` apasa ENTER automat\n- `return 0;` -- anunta ca totul a decurs bine\n\n**Regula de retinut:** Daca uiti `;` la finalul unei linii, compilatorul se opreste si primesti o eroare. Pune intotdeauna `;` si vei fi in regula."
+        },
+        "hacker": {
+          "pages": [
+            "### Misiunea: primul output\n\nUn program = o lista de comenzi executate una cate una. Vrei sa afisezi text pe terminal? In C++, comanda ta este `cout`. Simplu. Direct. Functioneaza. Scrii, compilezi, rulezi -- apare pe ecran.",
+            "### Regula de aur a C++\n\n`;` la finalul fiecarei linii de cod. Mereu. Daca uiti, compilatorul se opreste complet -- nimic nu mai merge. Nicio exceptie, niciun scuze. Pune-l si treci mai departe."
+          ],
+          "cascade": "### Cod. Ruleaza. Done.\n\nAsta e cel mai simplu program C++ care trimite text pe terminal:\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Acces acordat.\" << \"\\n\";\n    cout << \"Sistem online.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Breakdown rapid:**\n- `#include <iostream>` -- incarci uneltele de output\n- `int main()` -- de aici porneste executia, fara exceptii\n- `cout << \"text\" << \"\\n\";` -- trimite text pe terminal, `\"\\n\"` = linie noua\n- `return 0;` -- iesire curata, cod de succes\n\n**Trick:** Foloseste `\"\\n\"` in loc de `endl`. Ambele trec la rand nou, dar `\"\\n\"` e mai rapid in programe cu mult output. Obisnuieste-te cu el de la inceput."
+        },
+        "socrates": {
+          "pages": [
+            "### O ghicitoare\n\nDaca vrei sa trimiti un mesaj cuiva, ai nevoie de o metoda de comunicare -- telefon, hartie, voce... Computerul nu te aude, dar are un ecran. Cum crezi ca ai putea sa ii 'vorbesti' prin cod? Ce comanda ar putea face asta?",
+            "### Gandeste-te la o propozitie\n\nCand scrii o fraza, cum stii ca s-a terminat? Prin **punct**! Computerul face acelasi lucru -- in C++, instructiunile se termina cu `;`. Fara el, computerul nu stie daca ai terminat sau mai urmeaza ceva si refuza sa ruleze programul."
+          ],
+          "cascade": "### Descoperi singur ce face fiecare linie\n\nCiteste codul de mai jos. Inainte sa citesti explicatiile, incearca sa ghicesti ce face fiecare linie:\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Buna ziua!\" << \"\\n\";\n    cout << \"Tocmai am scris primul meu program.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Hai sa verificam:**\n- `#include <iostream>` -- fara asta, `cout` nu exista. E ca si cum ai cere pix inainte sa scrii.\n- `int main()` -- de ce crezi ca se numeste MAIN? Pentru ca e programul principal -- totul porneste de aici.\n- `cout << \"text\"` -- `<<` este ca o sageata: impinge textul spre ecran.\n- `\"\\n\"` -- de ce e nevoie de el? Incearca sa-l stergi si ruleaza. Ce observi?\n\n**Insight:** `\"\\n\"` este tasta ENTER din cod. Fara el, toate mesajele tale ar aparea pe acelasi rand, lipite. Cand vrei o linie noua in output -- `\"\\n\"` e raspunsul."
+        }
       },
       "python": {
-        "architect": "### >_ [SYSTEM SPEC]: Structura unui program Python\n\nPython este un limbaj interpretat: CPython citeste fisierul `.py` linie cu linie, compileaza fiecare instructiune la bytecode si o executa imediat in Python Virtual Machine (PVM). Nu exista faza de linking; importurile sunt rezolvate la runtime via `sys.path`.\n\nExecutia incepe de la prima linie a fisierului si continua secvential. Nu exista functie de entry point obligatorie. Conventia `if __name__ == '__main__':` separa codul de executie directa de cel importabil ca modul -- `__name__` primeste valoarea `'__main__'` doar la rulare directa, nu la import.\n\nIndentarea este **sintaxa obligatorie**, nu stil. Un bloc indentat gresit genereaza `IndentationError: unexpected indent`. Amestecul de tab-uri si spatii produce `TabError`. Functia `print()` scrie pe `stdout` si adauga automat `'\\n'`. Parametrul `end=''` controleaza terminatorul; `sep=','` controleaza separatorul. Ghilimelele nechise produc `SyntaxError: EOL while scanning string literal`. Semicolonul la final este legal, dar violeaza PEP8.\n\n```python\nprint(\"Primul program Python!\")\nprint(\"Tab: \\t | Newline: \\n\")\nprint(\"A\", \"B\", \"C\", sep=\"-\", end=\"!\\n\")\n```\n\n**Avertisment tehnic:** `IndentationError` este una dintre cele mai frecvente erori pentru studentii care migreaza din C++. Python nu accepta amestecul tab+spatii in indentare -- produce `TabError`. Ghilimelele simple si duble sunt interschimbabile, dar nu se pot amesteca in acelasi string literal. Adaugarea `;` la final nu produce eroare, dar semnaleaza ca autorul nu intelege semantica Python.",
-        "hacker": "### >_ [ALERT]: Python -- executie directa, zero etape de compilare\n\nTarget: executie directa, fara build steps. Vector: interpretorul CPython, care proceseaza fiecare linie ca instructiune autonoma. Fisierul `.py` este atat sursa cat si executabil -- nu exista separare intre compilare si runtime.\n\n`print()` este comanda de output. Fara argumente suplimentare, adauga `'\\n'` automat. `end=''` suprima newline-ul pentru output continuu; `sep=','` seteaza separatorul. Guard-ul `if __name__ == '__main__':` activeaza blocul de executie doar in modul script direct -- dezactivat la import.\n\nPitfall-uri operative: ghilimele deschise fara pereche -- `SyntaxError: EOL while scanning string literal`. Indentare incorecta -- `IndentationError: unexpected indent`. Tab+spatii amestecate -- `TabError`. Semicolonul final nu blocheaza executia, dar marcheaza cod C++ tradus naiv in Python.\n\n```python\nif __name__ == '__main__':\n    print(\"Output activat.\")\n    print(\"Multi-arg:\", \"A\", \"B\", sep=\" | \", end=\"\\n\")\n    print(\"Escape: tab=\\t newline=\\n\")\n```\n\n**Optimizare competitiva:** `print()` in Python are overhead semnificativ per apel fata de `cout` -- fiecare invocare implica lookup dinamic, formatare si apel de sistem. Pentru probleme cu output masiv, colectati rezultatele intr-un `list` si emiteti un singur `sys.stdout.write('\\n'.join(results))`. Aceasta reduce apelurile de sistem de la N la 1, taind substantial timpul de I/O.",
-        "socrates": "### >_ [QUERY]: De ce Python executa codul fara sa stie de unde sa inceapa?\n\nO intrebare inainte de cod: cum stie interpretorul Python de unde sa inceapa executia, daca nu exista o functie `main()` obligatorie?\n\nRaspunsul: nu are nevoie sa stie. Python executa fisierul de sus in jos, instructiune cu instructiune. OS-ul porneste interpretorul si ii da fisierul; interpretorul citeste linie cu linie. Primul `print()` din fisier se executa primul.\n\nAtunci de ce exista `if __name__ == '__main__':`? Gandeste-te la un instrument care poate fi folosit singur (ca script) sau ca parte dintr-un ansamblu (ca modul importat). Cand importi un modul, nu vrei ca tot codul sa ruleze automat -- vrei doar sa incarci functiile. Guard-ul face exact aceasta diferentiere.\n\nCe se intampla daca indentezi gresit? Python trateaza indentarea ca sintaxa -- nu ca stil. Un bloc indentat la nivel gresit genereaza `IndentationError`. Ghilimele deschise fara pereche produc `SyntaxError: EOL while scanning string literal`.\n\n```python\ndef salut():\n    print(\"Functie apelata explicit.\")\n\nif __name__ == '__main__':\n    salut()\n    print(\"Executat direct, nu importat.\")\n```\n\n**Insight tehnic:** Spre deosebire de C++, unde un `;` lipsa opreste compilarea, Python foloseste newline-ul ca terminator implicit de instructiune -- niciun delimiter explicit nu este necesar. Adaugarea unui `;` la final este sintactic legala, dar idiomatically incorecta si tradeaza un obicei din C++. `IndentationError` si `TabError` sunt unice Python-ului: fiecare nivel de bloc trebuie indentat consistent -- interpretorul refuza executia la prima inconsistenta."
+        "architect": {
+          "pages": [
+            "### Primul tau semnal\n\nUn program este o **lista de pasi** pe care computerul ii urmeaza in ordine -- exact ca o reteta. In Python, afisezi text direct cu `print()`. Scrii, rulezi, si mesajul apare instant pe ecran. Nicio pregatire speciala necesara.",
+            "### Python e mai relaxat\n\nIn Python nu ai nevoie de punct si virgula la finalul liniilor. Computerul stie ca o instructiune s-a terminat cand **treci la un rand nou**. Mai simplu, mai curat -- ca si cum ai scrie o lista de sarcini normala."
+          ],
+          "cascade": "### Codul, pas cu pas\n\nHai sa vedem cum ii ordonam computerului sa afiseze un mesaj pe ecran:\n\n```python\nprint(\"Salut, lume!\")\nprint(\"Acesta e primul meu program.\")\n```\n\n**Ce face fiecare linie:**\n- `print(\"Salut, lume!\")` -- afiseaza textul dintre paranteze direct pe ecran\n- A doua linie `print(...)` -- afiseaza al doilea mesaj **pe un rand nou** automat\n- Nu avem nevoie de cutii speciale sau pregatiri -- Python ruleaza de sus in jos\n\n**Regula de retinut:** Python apasa automat ENTER dupa fiecare `print()`. Daca vrei ca doua texte sa apara pe acelasi rand, folosesti `print(\"text1\", \"text2\")` -- le separa cu un spatiu automat."
+        },
+        "hacker": {
+          "pages": [
+            "### Misiunea: primul output\n\nUn program = comenzi executate una cate una. In Python afisezi text cu `print()`. Zero configuratii, zero pregatiri -- scrii comanda, rulezi fisierul, gata. Output instant pe terminal.",
+            "### Python: zero ceremonie\n\nNiciun `;`, niciun `{}`, nicio configurare. Treci la rand nou = Python stie ca instructiunea s-a terminat. Indentarea conteaza -- asta e singura regula stricta. Rest? Libertate totala."
+          ],
+          "cascade": "### Cod. Ruleaza. Done.\n\nCel mai simplu program Python care trimite text pe terminal:\n\n```python\nprint(\"Acces acordat.\")\nprint(\"Sistem online.\")\n```\n\n**Breakdown rapid:**\n- `print(\"text\")` -- trimite textul direct pe terminal, gata\n- Fiecare `print()` = o linie noua in output, automat\n- Nu compilezi nimic -- rulezi direct cu `python fisier.py`\n\n**Trick:** Vrei sa afisezi mai multe lucruri pe acelasi rand? Folosesti `print(\"A\", \"B\", \"C\")` si Python le separa cu spatii. Vrei separator diferit? `print(\"A\", \"B\", sep=\"-\")` afiseaza `A-B`."
+        },
+        "socrates": {
+          "pages": [
+            "### O ghicitoare\n\nDaca vrei sa trimiti un mesaj cuiva, ai nevoie de o metoda de comunicare. Computerul nu te aude, dar are un ecran. Cum crezi ca ai putea sa ii 'vorbesti' cu cel mai simplu cod posibil? Ce comanda ar putea face asta?",
+            "### Gandeste-te la un SMS\n\nCand trimiti un SMS, nu pui punct la finalul fiecarei fraze. Apesi ENTER si gata -- mesajul e complet. Python functioneaza exact la fel: treci la rand nou si instructiunea e terminata. Simplu ca un SMS."
+          ],
+          "cascade": "### Descoperi singur ce face fiecare linie\n\nCiteste codul de mai jos. Inainte sa citesti explicatiile, incearca sa ghicesti ce va aparea pe ecran:\n\n```python\nprint(\"Buna ziua!\")\nprint(\"Tocmai am scris primul meu program.\")\n```\n\n**Hai sa verificam:**\n- Ce crezi ca afiseaza prima linie? Textul dintre ghilimele -- exact!\n- De ce apare al doilea mesaj pe un rand nou, fara sa scriem ceva special?\n  Python face asta automat -- la fel cum ENTER-ul din SMS trimite pe linie noua.\n- Incearca sa stergi ghilimelele din jurul textului. Ce crezi ca se intampla?\n\n**Insight:** Ghilimelele din `print()` sunt ca niste rame -- tot ce e inuntrul lor apare pe ecran exact cum ai scris. Daca le uiti, Python nu mai stie ca e text si da eroare."
+        }
       }
     },
     "en": {
       "cpp": {
-        "architect": "### >_ [SYSTEM SPEC]: Structure of a C++ Program\n\nA C++ program passes through four stages before execution: **preprocessing**, **compilation**, **linking**, and **execution**. The preprocessor copies declarations from the `<iostream>` header into the translation unit. The compiler translates `.cpp` source into object code `.o`. The linker combines objects into the final executable binary.\n\nEvery C++ program requires exactly one `main()` function with signature `int main()`. Its absence generates `undefined reference to main`. Every statement must be terminated with `;` -- omitting it produces `error: expected ; before [token]`.\n\nThe `cout` object is an output stream connected to `stdout`. The insertion operator `<<` sends data into the stream. The correct operator is `<<`, not `>>` -- `cout >> text` does not compile; `>>` belongs to `cin`. Missing `#include <iostream>` produces `error: cout was not declared in this scope`.\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"First program!\" << \"\\n\";\n    cout << \"Tab: \\t | Newline: \\n\" << \"\\n\";\n    return 0;\n}\n```\n\n**Technical warning:** `endl` inserts a newline and calls `flush()` on the buffer -- a separate I/O operation, expensive inside tight loops. Prefer `'\\n'` in competitive programming with heavy output. Unclosed string literals produce `error: missing terminating character`. Avoid `using namespace std;` in header files -- prefer explicit `std::cout` for portability.",
-        "hacker": "### >_ [ALERT]: C++ Pipeline -- Four Stages to Execution\n\nYour program does not run directly from source. It passes through: preprocessing -> compilation -> linking -> execution. The first stage fires with `#include <iostream>` -- injecting I/O stream declarations. The compiler emits object code. The linker assembles an executable binary with a single entry point: `main()`.\n\nWithout `main()` -- the linker throws `undefined reference to main` and execution never starts. Every statement requires a trailing `;` -- the compiler stops with `expected ; before [token]`. Classic bug: `cout >> text` instead of `cout << text`. The `>>` operator belongs to `cin` -- reversed direction, immediate compile error.\n\nOther common fails: missing `#include <iostream>` -- `cout was not declared in this scope`. Unclosed string literal -- `missing terminating character`. Escape sequences `'\\n'` and `'\\t'` are processed at build-time, not runtime.\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Output activated.\" << \"\\n\";\n    cout << \"Escapes: tab=\\t newline=\\n\" << \"\\n\";\n    return 0;\n}\n```\n\n**Competitive optimization:** `endl` forces a buffer flush on every call -- in loops with thousands of iterations, latency accumulates. Replace with `'\\n'`. Combine with `ios::sync_with_stdio(false)` and `cin.tie(NULL)` for maximum stream throughput -- this disables C/C++ stream synchronization and can halve I/O time on large inputs.",
-        "socrates": "### >_ [QUERY]: Why does your program need a contract with the OS?\n\nConsider: why does the compiler reject instructions written directly in a file, outside any function? The operating system needs an explicit contract -- a well-defined start address. That contract is called `main()`.\n\nBefore the OS calls `main()`, your code passes through three filters: the preprocessor (expands `#include <iostream>` into concrete declarations), the compiler (transforms C++ into machine code), and the linker (combines everything into an executable). Forget `;` at the end of a statement and the compiler stops with `expected ; before [token]`.\n\nWhy `cout << text` and not `cout >> text`? Think about direction: `<<` means send toward the left, toward the channel. `>>` means extract from the channel into a variable -- that is `cin`. Reversing the direction is an immediate compile error.\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello!\" << \"\\n\";\n    cout << \"Tab: \\t and newline: \\n included.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Technical insight:** `endl` is equivalent to `'\\n'` plus `flush()` -- forces immediate writing of the output buffer, useful for real-time debugging, costly in production loops. Missing `#include <iostream>` makes `cout` invisible to the compiler; unclosed string literals cause tokenization errors. The semicolon is not optional -- C++ delimits statements with `;`, not indentation or newlines, unlike Python."
+        "architect": {
+          "pages": [
+            "### Your First Signal\n\nA program is a **list of steps** the computer follows in order -- just like a cooking recipe. Before any calculations, it needs to know how to talk to you. In C++, the command that shows text on screen is called `cout`.",
+            "### One Simple Rule\n\nIn C++, every instruction must end with `;` (a semicolon). Think of it as the **period at the end of a sentence** -- without it, the computer does not know where your command ends and gets completely confused."
+          ],
+          "cascade": "### The Code, Step by Step\n\nLet us see how we tell the computer to show a message on screen:\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello, world!\" << \"\\n\";\n    cout << \"This is my first program.\" << \"\\n\";\n    return 0;\n}\n```\n\n**What each line does:**\n- `#include <iostream>` -- tells the computer 'I need the tools to display text on screen'\n- `using namespace std;` -- a shortcut so we do not have to write extra code every time\n- `int main() { }` -- the main box where all your important code lives\n- `cout << \"Hello!\" << \"\\n\";` -- pushes text to the screen; `\"\\n\"` presses ENTER automatically\n- `return 0;` -- announces that everything went fine\n\n**Rule to remember:** If you forget `;` at the end of a line, the compiler stops and you get an error. Always put `;` and you will be fine."
+        },
+        "hacker": {
+          "pages": [
+            "### Mission: First Output\n\nA program = a list of commands the machine runs one by one. Want to print text to the terminal? In C++, your command is `cout`. Simple. Direct. It works. Write, compile, run -- it appears on screen.",
+            "### The Golden Rule of C++\n\n`;` at the end of every line of code. Always. Forget it and the compiler stops dead -- nothing runs. No exceptions, no excuses. Just put it there and move on."
+          ],
+          "cascade": "### Code. Run. Done.\n\nThis is the simplest C++ program that sends text to the terminal:\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Access granted.\" << \"\\n\";\n    cout << \"System online.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Quick breakdown:**\n- `#include <iostream>` -- loads your output tools\n- `int main()` -- execution starts here, no exceptions\n- `cout << \"text\" << \"\\n\";` -- sends text to terminal, `\"\\n\"` = new line\n- `return 0;` -- clean exit, success code\n\n**Trick:** Use `\"\\n\"` instead of `endl`. Both move to a new line, but `\"\\n\"` is faster in programs with lots of output. Get used to it from the start."
+        },
+        "socrates": {
+          "pages": [
+            "### A Riddle\n\nIf you want to send a message to someone, you need a way to communicate -- a phone, paper, your voice... The computer cannot hear you, but it has a screen. How do you think you could talk to it through code? What command might do that?",
+            "### Think About a Sentence\n\nWhen you write a sentence, how do you know it is over? With a **period**! The computer does the same thing -- in C++, instructions end with `;`. Without it, the computer does not know if you are done and refuses to run the program."
+          ],
+          "cascade": "### Discover What Each Line Does\n\nRead the code below. Before reading the explanations, try to guess what each line does:\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Good morning!\" << \"\\n\";\n    cout << \"I just wrote my first program.\" << \"\\n\";\n    return 0;\n}\n```\n\n**Let us check:**\n- `#include <iostream>` -- without this, `cout` does not exist. Like asking for a pen before writing.\n- `int main()` -- why do you think it is called MAIN? Because it is the main program -- everything starts here.\n- `cout << \"text\"` -- `<<` is like an arrow: it pushes text toward the screen.\n- `\"\\n\"` -- why is it needed? Try deleting it and run the code. What do you notice?\n\n**Insight:** `\"\\n\"` is the ENTER key inside your code. Without it, all your messages would appear on the same line, squished together. Whenever you want a new line in your output -- `\"\\n\"` is your answer."
+        }
       },
       "python": {
-        "architect": "### >_ [SYSTEM SPEC]: Structure of a Python Program\n\nPython is an interpreted language: CPython reads the `.py` file line by line, compiles each statement to bytecode, and executes it immediately in the Python Virtual Machine (PVM). There is no linking phase; imports are resolved at runtime via `sys.path`.\n\nExecution begins at the first line of the file and proceeds sequentially. There is no mandatory entry-point function. The convention `if __name__ == '__main__':` separates direct-execution code from importable module code -- `__name__` receives the value `'__main__'` only when the file is run directly, not when imported.\n\nIndentation is **mandatory syntax**, not style. A misaligned block produces `IndentationError: unexpected indent`. Mixing tabs and spaces produces `TabError`. The `print()` function writes to `stdout` and appends `'\\n'` automatically. The `end=''` parameter controls the terminator; `sep=','` controls the separator. Unclosed string literals produce `SyntaxError: EOL while scanning string literal`. A trailing semicolon is legal but violates PEP8.\n\n```python\nprint(\"First Python program!\")\nprint(\"Tab: \\t | Newline: \\n\")\nprint(\"A\", \"B\", \"C\", sep=\"-\", end=\"!\\n\")\n```\n\n**Technical warning:** `IndentationError` is among the most frequent errors for students migrating from C++. Python does not accept mixed tabs and spaces in indentation -- mixing produces `TabError`. Single and double quotes are interchangeable but cannot be mixed within the same string literal. A trailing `;` does not cause an error but signals the author does not understand Python statement semantics.",
-        "hacker": "### >_ [ALERT]: Python Interpreter -- Direct Execution, Zero Build Steps\n\nTarget: direct execution, no build pipeline. Vector: the CPython interpreter, which processes each line as an independent statement. The `.py` file is both source and executable -- no distinction between compilation and runtime.\n\n`print()` is the output command. Without extra arguments it appends `'\\n'` automatically. `end=''` suppresses the newline for continuous output; `sep=','` sets the separator. The `if __name__ == '__main__':` guard activates the execution block only in direct-script mode -- disabled on import.\n\nOperational pitfalls: unclosed string literal -- `SyntaxError: EOL while scanning string literal`. Incorrect indentation -- `IndentationError: unexpected indent`. Mixed tabs and spaces -- `TabError`. Trailing semicolons do not crash execution but mark naively translated C++ code.\n\n```python\nif __name__ == '__main__':\n    print(\"Output activated.\")\n    print(\"Multi-arg:\", \"A\", \"B\", sep=\" | \", end=\"\\n\")\n    print(\"Escapes: tab=\\t newline=\\n\")\n```\n\n**Competitive optimization:** `print()` in Python carries significant per-call overhead compared to `cout` -- each invocation involves dynamic lookup, formatting, and a system call. For problems with massive output, collect results in a list and emit a single `sys.stdout.write('\\n'.join(results))`. This reduces system calls from N to 1, cutting I/O time substantially on judge systems with tight time limits.",
-        "socrates": "### >_ [QUERY]: Why does Python run code without knowing where to start?\n\nBefore writing any code, a question: how does the Python interpreter know where to begin execution if there is no mandatory `main()` function?\n\nThe answer: it does not need to know. Python executes the file from top to bottom, instruction by instruction. The OS starts the interpreter and hands it the file; the interpreter reads line by line. The first `print()` in the file executes first.\n\nSo why does `if __name__ == '__main__':` exist? Think of a tool that can work standalone as a script, or as part of a larger system when imported as a module. When you import a module, you do not want all its code to run automatically -- you only want to load the functions. The guard makes exactly this distinction.\n\nWhat happens if you indent incorrectly? Python treats indentation as syntax, not style. A block indented at the wrong level produces `IndentationError`. Unclosed quotes produce `SyntaxError: EOL while scanning string literal`.\n\n```python\ndef greet():\n    print(\"Function called explicitly.\")\n\nif __name__ == '__main__':\n    greet()\n    print(\"Run directly, not imported.\")\n```\n\n**Technical insight:** Unlike C++, where a missing `;` stops compilation, Python uses newlines as implicit statement terminators -- no explicit delimiter needed. A trailing `;` is syntactically valid but idiomatically wrong and reveals a C++ habit. `IndentationError` and `TabError` are unique to Python: every block level must be indented consistently -- the interpreter refuses execution at the first indentation inconsistency it encounters."
+        "architect": {
+          "pages": [
+            "### Your First Signal\n\nA program is a **list of steps** the computer follows in order -- just like a recipe. In Python, you display text directly with `print()`. Write it, run it, and your message appears on screen instantly. No special setup required.",
+            "### Python is More Relaxed\n\nIn Python you do not need a semicolon at the end of each line. The computer knows an instruction is over when you **start a new line**. Simpler, cleaner -- like writing a normal to-do list."
+          ],
+          "cascade": "### The Code, Step by Step\n\nLet us see how we tell the computer to show a message on screen:\n\n```python\nprint(\"Hello, world!\")\nprint(\"This is my first program.\")\n```\n\n**What each line does:**\n- `print(\"Hello, world!\")` -- displays the text inside the parentheses directly on screen\n- The second `print(...)` -- shows the next message **on a new line** automatically\n- No special boxes or setup needed -- Python runs from top to bottom\n\n**Rule to remember:** Python automatically presses ENTER after each `print()`. If you want two pieces of text on the same line, use `print(\"text1\", \"text2\")` -- Python separates them with a space automatically."
+        },
+        "hacker": {
+          "pages": [
+            "### Mission: First Output\n\nA program = commands executed one by one. In Python you print text with `print()`. Zero setup, zero configuration -- write the command, run the file, done. Instant output on the terminal.",
+            "### Python: Zero Ceremony\n\nNo `;`, no `{}`, no configuration. Go to a new line = Python knows the instruction is done. Indentation matters -- that is the only strict rule. Everything else? Total freedom."
+          ],
+          "cascade": "### Code. Run. Done.\n\nThe simplest Python program that sends text to the terminal:\n\n```python\nprint(\"Access granted.\")\nprint(\"System online.\")\n```\n\n**Quick breakdown:**\n- `print(\"text\")` -- sends the text straight to the terminal, that is it\n- Each `print()` = a new line in output, automatically\n- No compiling -- run directly with `python file.py`\n\n**Trick:** Want to display multiple things on the same line? Use `print(\"A\", \"B\", \"C\")` and Python separates them with spaces. Want a different separator? `print(\"A\", \"B\", sep=\"-\")` outputs `A-B`."
+        },
+        "socrates": {
+          "pages": [
+            "### A Riddle\n\nIf you want to send a message to someone, you need a way to communicate. The computer cannot hear you, but it has a screen. How do you think you could talk to it with the simplest code possible? What command might do that?",
+            "### Think About a Text Message\n\nWhen you text someone, you do not put a period at the end of every sentence. You just hit ENTER and move on. Python works exactly the same way -- new line = instruction complete. Simple as texting."
+          ],
+          "cascade": "### Discover What Each Line Does\n\nRead the code below. Before reading the explanations, try to guess what will appear on screen:\n\n```python\nprint(\"Good morning!\")\nprint(\"I just wrote my first program.\")\n```\n\n**Let us check:**\n- What do you think the first line shows? The text between the quotes -- exactly!\n- Why does the second message appear on a new line without writing anything special?\n  Python does this automatically -- just like ENTER in a text message starts a new line.\n- Try removing the quotes around the text. What do you think happens?\n\n**Insight:** The quotes in `print()` are like a frame -- everything inside them appears on screen exactly as you wrote it. If you forget them, Python does not know it is text and throws an error."
+        }
       }
     }
   },
   "quiz": {
-    "question_ro": "Care este rolul instructiunii `return 0;` la sfarsitul functiei `main()` in C++?",
-    "question_en": "What is the role of the `return 0;` statement at the end of the `main()` function in C++?",
-    "options_ro": [
-      "Goleste (flush) buffer-ul de iesire inainte de terminarea programului",
-      "Transmite codul de iesire sistemului de operare, indicand executie cu succes",
-      "Dezaloca toata memoria heap utilizata de program",
-      "Reporneste executia functiei main() de la inceput"
+    "cpp": [
+      {
+        "question_ro": "Ce se intampla daca uiti `;` la finalul unei instructiuni in C++?",
+        "question_en": "What happens if you forget `;` at the end of an instruction in C++?",
+        "options_ro": [
+          "Codul se sterge automat",
+          "Compilatorul da o eroare -- nu stie unde se termina comanda",
+          "Programul ruleaza, dar mai lent",
+          "Trece automat la randul urmator"
+        ],
+        "options_en": [
+          "The code deletes itself automatically",
+          "The compiler gives an error -- it does not know where the command ends",
+          "The program runs, but slower",
+          "It automatically moves to the next line"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation_ro": "Compilatorul citeste codul caracter cu caracter si se asteapta la `;` ca sa stie ca instructiunea s-a terminat. Fara el, se opreste si iti arata o eroare. Programul nu va rula deloc pana nu repari greseala.",
+        "explanation_en": "The compiler reads code character by character and expects `;` to know an instruction is done. Without it, it stops and shows you an error. The program will not run at all until you fix the mistake."
+      },
+      {
+        "question_ro": "Ce face caracterul `\\n` inserat intr-un text in C++?",
+        "question_en": "What does the character `\\n` do when inserted in text in C++?",
+        "options_ro": [
+          "Sterge ultimul cuvant din text",
+          "Functioneaza ca tasta ENTER -- muta textul urmator pe un rand nou",
+          "Face textul sa fie scris cu litere mari",
+          "Opreste executia programului"
+        ],
+        "options_en": [
+          "It deletes the last word from the text",
+          "It works like the ENTER key -- moves the next text to a new line",
+          "It makes the text appear in capital letters",
+          "It stops the execution of the program"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation_ro": "`\\n` este caracterul de linie noua. Ori de cate ori codul il intalneste, cursorul sare la randul urmator -- exact ca atunci cand apesi ENTER pe tastatura. Fara el, tot textul tau ar aparea lipit pe o singura linie.",
+        "explanation_en": "`\\n` is the newline character. Whenever the code encounters it, the cursor jumps to the next line -- exactly like pressing ENTER on your keyboard. Without it, all your text would appear squished onto a single line."
+      },
+      {
+        "question_ro": "De ce `\"\\n\"` este de preferat fata de `endl` in C++ cand ai mult output?",
+        "question_en": "Why is `\"\\n\"` preferred over `endl` in C++ when you have lots of output?",
+        "options_ro": [
+          "`endl` scrie doua caractere, `\"\\n\"` scrie doar unul",
+          "`endl` goleste si buffer-ul dupa fiecare linie, ceea ce e mai lent",
+          "`endl` nu functioneaza pe toate sistemele",
+          "Nu exista nicio diferenta intre ele"
+        ],
+        "options_en": [
+          "`endl` writes two characters while `\"\\n\"` writes only one",
+          "`endl` also flushes the buffer after each line, which is slower",
+          "`endl` does not work on all systems",
+          "There is no difference between them"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation_ro": "`endl` face doua lucruri: adauga `\\n` si forteaza imediat trimiterea datelor pe ecran (flush). In programe cu mult output, acest flush la fiecare linie incetineste programul. `\"\\n\"` adauga doar caracterul, fara flush fortat.",
+        "explanation_en": "`endl` does two things: adds `\\n` and immediately forces the data to be sent to the screen (flush). In programs with heavy output, this flush on every line slows things down. `\"\\n\"` only adds the character, without a forced flush."
+      }
     ],
-    "options_en": [
-      "Flushes the output buffer before the program terminates",
-      "Transmits the exit code to the operating system, indicating successful execution",
-      "Deallocates all heap memory used by the program",
-      "Restarts the execution of main() from the beginning"
-    ],
-    "correctAnswerIndex": 1,
-    "explanation_ro": "`return 0` transmite codul de iesire procesului parent (shell sau OS). Valoarea `0` semnifica executie cu succes conform conventiei POSIX/ISO C++. Memoria heap este eliberata de OS la terminarea procesului; flush-ul buffer-ului se face separat prin `endl` sau `fflush`. Valorile non-zero semnalizeaza erori si pot fi detectate de procese parent sau scripturi shell.",
-    "explanation_en": "`return 0` transmits the exit code to the parent process (shell or OS). The value `0` signifies successful execution per the POSIX/ISO C++ convention. Heap memory is freed by the OS when the process terminates; buffer flushing is handled separately via `endl` or `fflush`. Non-zero values signal errors and can be detected by parent processes or shell scripts."
+    "python": [
+      {
+        "question_ro": "Cum stie Python ca o instructiune s-a terminat, daca nu folosim `;`?",
+        "question_en": "How does Python know an instruction is done if we do not use `;`?",
+        "options_ro": [
+          "Ghiceste singur pe baza contextului",
+          "Prin simpla trecere la o linie noua",
+          "Foloseste spatii invizibile speciale",
+          "Se uita la lungimea textului"
+        ],
+        "options_en": [
+          "It guesses based on context",
+          "By simply moving to a new line",
+          "It uses special invisible spaces",
+          "It looks at the length of the text"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation_ro": "In Python, trecerea la un rand nou semnalizeaza ca instructiunea actuala s-a terminat. E ca si cum ai apasa ENTER la finalul unui SMS -- Python stie ca mesajul e complet.",
+        "explanation_en": "In Python, moving to a new line signals that the current instruction is done. It is like pressing ENTER at the end of a text message -- Python knows the message is complete."
+      },
+      {
+        "question_ro": "Ce se intampla daca scrii `print(salut)` fara ghilimele in Python?",
+        "question_en": "What happens if you write `print(salut)` without quotes in Python?",
+        "options_ro": [
+          "Afiseaza 'salut' exact cum ai scris",
+          "Python da eroare sau cauta o variabila numita 'salut'",
+          "Afiseaza un spatiu gol",
+          "Programul se opreste si reporneste"
+        ],
+        "options_en": [
+          "It prints 'salut' exactly as you wrote it",
+          "Python gives an error or looks for a variable named 'salut'",
+          "It prints an empty space",
+          "The program stops and restarts"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation_ro": "Fara ghilimele, Python crede ca `salut` este numele unei variabile, nu un text. Daca variabila nu exista, primesti `NameError: name 'salut' is not defined`. Textul pe care vrei sa il afisezi trebuie intotdeauna pus intre ghilimele.",
+        "explanation_en": "Without quotes, Python thinks `salut` is the name of a variable, not a text string. If the variable does not exist, you get `NameError: name 'salut' is not defined`. Text you want to display must always be placed inside quotes."
+      },
+      {
+        "question_ro": "Cum afisezi 'A' si 'B' pe acelasi rand, separate printr-o liniuta, in Python?",
+        "question_en": "How do you print 'A' and 'B' on the same line, separated by a dash, in Python?",
+        "options_ro": [
+          "`print(\"A\" + \"B\")`",
+          "`print(\"A\", \"B\", sep=\"-\")`",
+          "`print(\"A\", \"B\", end=\"-\")`",
+          "`print(\"A-\" + \"B-\")`"
+        ],
+        "options_en": [
+          "`print(\"A\" + \"B\")`",
+          "`print(\"A\", \"B\", sep=\"-\")`",
+          "`print(\"A\", \"B\", end=\"-\")`",
+          "`print(\"A-\" + \"B-\")`"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation_ro": "Parametrul `sep` controleaza ce apare intre argumentele lui `print()`. `sep=\"-\"` pune o liniuta intre 'A' si 'B', rezultand `A-B`. `end` controleaza ce apare la finalul intregului print, nu intre elemente.",
+        "explanation_en": "The `sep` parameter controls what appears between the arguments of `print()`. `sep=\"-\"` puts a dash between 'A' and 'B', resulting in `A-B`. `end` controls what appears at the very end of the print, not between elements."
+      }
+    ]
   }
 }

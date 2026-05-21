@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import client from '../api/client'
 import CircuitPathway from '../components/pathway/CircuitPathway'
 import { MODULES } from '../utils/constants'
+import useStore from '../store/useStore'
 
 // Orange accent used on the Mod 4 partial card on the dashboard
 const PARTIAL_ACCENT = '#C2410C'
@@ -15,6 +16,7 @@ export default function ModuleView() {
   const { t } = useTranslation()
 
   const module = MODULES.find((m) => m.slug === moduleSlug)
+  const completedCurriculumLessons = useStore((s) => s.completedCurriculumLessons)
 
   const [dbLessons, setDbLessons] = useState([])
   const [progress, setProgress] = useState([])
@@ -46,13 +48,14 @@ export default function ModuleView() {
     .filter((l) => l.macro === module.macro)
     .sort((a, b) => a.order_index - b.order_index)
 
-  // Align constants lessons with DB lessons by position
+  // Align constants lessons with DB lessons by position.
+  // A lesson counts as completed if either the DB progress record says so,
+  // or the user completed it via the file-based curriculum flow (stored in Zustand).
   const withDbStatus = constLessons.map((constLesson, idx) => {
     const dbLesson = moduleDbLessons[idx]
-    return {
-      ...constLesson,
-      _dbCompleted: dbLesson ? completedDbIds.has(dbLesson.id) : false,
-    }
+    const dbDone = dbLesson ? completedDbIds.has(dbLesson.id) : false
+    const curriculumDone = completedCurriculumLessons.includes(constLesson.id)
+    return { ...constLesson, _dbCompleted: dbDone || curriculumDone }
   })
 
   let computedLessons

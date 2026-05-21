@@ -259,6 +259,23 @@
       0 0 16px oklch(var(--success-ch) / 0.30);
   }
 
+  /* Cascade sector fade-in */
+  @keyframes fade-sector-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .sector-fade-in { animation: fade-sector-in 0.35s ease forwards; }
+
+  /* Wrong-answer shake */
+  @keyframes shake-x {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+  }
+  .shake { animation: shake-x 0.4s ease; }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;

@@ -1,0 +1,655 @@
+"""Rebuilds mod01_02 — Tipuri de date (Data Types). No emojis. Noob-friendly."""
+import json, pathlib
+
+ROOT = pathlib.Path(__file__).parent.parent
+OUT  = ROOT / "backend/lessons/mod01_bazele/mod01_02_tipuri.json"
+
+# ─── PAGES ────────────────────────────────────────────────────────────────────
+
+pages = {
+  "ro": {
+    "cpp": {
+      "architect": [
+        "### Cutia cu amintiri\n\n"
+        "Computerul organizeaza datele in **cutii virtuale** numite variabile. "
+        "Fiecare cutie are un **nume** ca sa o gasesti si o **eticheta** (tipul) "
+        "care spune ce poti pune inauntru: numere, litere sau valori DA/NU.",
+
+        "### Etichetele obligatorii in C++\n\n"
+        "In C++ trebuie sa declari tipul cutiei din prima: "
+        "`int` pentru numere intregi, `char` pentru o singura litera, `bool` pentru DA/NU. "
+        "Fara eticheta, compilatorul refuza sa creeze cutia.",
+      ],
+      "hacker": [
+        "### Aloca. Stocheaza. Acceseaza.\n\n"
+        "Variabilele sunt zone din memorie cu un nume. "
+        "Scrii un tip, un nume, o valoare -- computerul aloca spatiu si stocheaza. "
+        "In C++: `int`, `char`, `bool`. Declari tipul INAINTE. "
+        "Fara tip, compilatorul refuza.",
+
+        "### Garbage Value -- pericolul ascuns\n\n"
+        "In C++, daca scrii `int x;` fara valoare de pornire, "
+        "cutia nu e goala -- contine un **numar rezidual** ramas de la alte programe. "
+        "Asta iti va strica toate calculele. Initializeaza intotdeauna: `int x = 0;`.",
+      ],
+      "socrates": [
+        "### Cum retine computerul informatii?\n\n"
+        "Gandeste-te la un sertar de birou cu etichete -- "
+        "fiecare sertar contine un tip diferit de obiect. "
+        "Variabilele functioneaza la fel: un 'sertar' in memoria computerului, "
+        "cu un nume ca sa il gasesti rapid.",
+
+        "### De ce C++ cere un tip?\n\n"
+        "Cum stie computerul cat spatiu sa rezerve pentru o variabila? "
+        "O litera ocupa mai putin decat un numar mare. "
+        "Asta e motivul pentru care C++ cere `int`, `char` sau `bool` -- "
+        "ca sa stie exact cat sa aloce.",
+      ],
+    },
+    "python": {
+      "architect": [
+        "### Cutia cu amintiri\n\n"
+        "Computerul organizeaza datele in **cutii virtuale** numite variabile. "
+        "Fiecare cutie are un **nume** ca sa o gasesti si un **continut** -- "
+        "orice tip de informatie: numere, text sau valori adevarat/fals.",
+
+        "### Python e mai simplu\n\n"
+        "In Python nu trebuie sa declari tipul variabilei -- "
+        "computerul isi da seama singur din valoarea pe care o pui. "
+        "Atentie: `True` si `False` se scriu cu litera mare la inceput -- "
+        "asta e o regula stricta.",
+      ],
+      "hacker": [
+        "### Aloca. Stocheaza. Acceseaza.\n\n"
+        "Variabilele sunt zone din memorie cu un nume. "
+        "In Python creezi o variabila la primul assignment: "
+        "scrii `x = 100` si gata -- computerul rezerva spatiu automat. "
+        "Zero declaratii, zero tipuri.",
+
+        "### Python: tipizare automata\n\n"
+        "Nu scrii niciodata tipul. Python detecteaza automat: "
+        "`42` -> numar intreg, `3.14` -> numar zecimal, `True` -> adevarat/fals. "
+        "Singurul lucru de retinut: `True` si `False` cu litera mare obligatoriu.",
+      ],
+      "socrates": [
+        "### Cum retine computerul informatii?\n\n"
+        "Gandeste-te la un sertar de birou cu etichete -- "
+        "fiecare sertar contine un tip diferit de obiect. "
+        "Variabilele functioneaza la fel: un 'sertar' in memoria computerului, "
+        "cu un nume ca sa il gasesti rapid.",
+
+        "### De ce Python nu cere tip?\n\n"
+        "Daca pui `100` intr-o variabila, stii sigur ca e un numar, nu? "
+        "Python 'vede' acelasi lucru. De aceea nu ai nevoie sa scrii `int`. "
+        "Ce crezi ca se intampla daca scrii `true` cu litera mica in Python?",
+      ],
+    },
+  },
+  "en": {
+    "cpp": {
+      "architect": [
+        "### The Memory Box\n\n"
+        "The computer organizes data into **virtual boxes** called variables. "
+        "Each box has a **name** so you can find it and a **label** (the type) "
+        "that says what you can put inside: numbers, letters, or yes/no values.",
+
+        "### Required Labels in C++\n\n"
+        "In C++ you must declare the type upfront: "
+        "`int` for whole numbers, `char` for a single letter, `bool` for yes/no. "
+        "Without a label, the compiler refuses to create the box.",
+      ],
+      "hacker": [
+        "### Allocate. Store. Access.\n\n"
+        "Variables are named memory slots. "
+        "Write a type, a name, a value -- the computer allocates space and stores. "
+        "In C++: `int`, `char`, `bool`. Declare the type FIRST. "
+        "No type, no compile.",
+
+        "### Garbage Value -- the hidden danger\n\n"
+        "In C++, if you write `int x;` without an initial value, "
+        "the box is not empty -- it contains a **residual number** left by other programs. "
+        "This will corrupt all your calculations. Always initialize: `int x = 0;`.",
+      ],
+      "socrates": [
+        "### How Does the Computer Remember?\n\n"
+        "Think of a desk drawer with labels -- "
+        "each drawer holds a different type of object. "
+        "Variables work the same way: a 'drawer' in the computer's memory, "
+        "with a name so you can find it quickly.",
+
+        "### Why Does C++ Need a Type?\n\n"
+        "How does the computer know how much space to reserve for a variable? "
+        "A letter takes less space than a large number. "
+        "That is why C++ requires `int`, `char`, or `bool` -- "
+        "so it knows exactly how much to allocate.",
+      ],
+    },
+    "python": {
+      "architect": [
+        "### The Memory Box\n\n"
+        "The computer organizes data into **virtual boxes** called variables. "
+        "Each box has a **name** so you can find it and **content** -- "
+        "any type of information you want to store: numbers, text, or true/false values.",
+
+        "### Python is Simpler\n\n"
+        "In Python you do not declare the type of a variable -- "
+        "the computer figures it out from the value you put in. "
+        "Note: `True` and `False` are written with a capital letter -- "
+        "that is a strict rule in Python.",
+      ],
+      "hacker": [
+        "### Allocate. Store. Access.\n\n"
+        "Variables are named memory slots. "
+        "In Python you create a variable on first assignment: "
+        "write `x = 100` and done -- the computer reserves space automatically. "
+        "Zero declarations, zero types.",
+
+        "### Python: Automatic Typing\n\n"
+        "Never write a type. Python detects it automatically: "
+        "`42` -> integer, `3.14` -> decimal, `True` -> boolean. "
+        "The one thing to remember: `True` and `False` with a capital letter, always.",
+      ],
+      "socrates": [
+        "### How Does the Computer Remember?\n\n"
+        "Think of a desk drawer with labels -- "
+        "each drawer holds a different type of object. "
+        "Variables work the same way: a 'drawer' in the computer's memory, "
+        "with a name so you can find it quickly.",
+
+        "### Why Does Python Not Need a Type?\n\n"
+        "If you put `100` in a variable, you already know it is a number, right? "
+        "Python 'sees' the same thing. That is why you do not need to write `int`. "
+        "What do you think happens if you write `true` with a lowercase letter in Python?",
+      ],
+    },
+  },
+}
+
+# ─── CASCADES ─────────────────────────────────────────────────────────────────
+
+cascades = {
+  "ro": {
+    "cpp": {
+      "architect": (
+        "### Cum declaram variabile in C++\n\n"
+        "Uite cum rezervam spatiu si ce punem in fiecare cutie:\n\n"
+        "```cpp\n"
+        "#include <iostream>\n"
+        "using namespace std;\n\n"
+        "int main() {\n"
+        "    int scor = 100;\n"
+        "    char litera = 'A';\n"
+        "    bool aTrecut = true;\n\n"
+        '    cout << "Scor: " << scor << "\\n";\n'
+        '    cout << "Litera: " << litera << "\\n";\n'
+        '    cout << "A trecut? " << aTrecut << "\\n";\n'
+        "    return 0;\n"
+        "}\n"
+        "```\n\n"
+        "**Ce face fiecare linie:**\n"
+        "- `int scor = 100;` -- rezerva o cutie de numere intregi, o numeste `scor`, pune 100\n"
+        "- `char litera = 'A';` -- o cutie pentru o singura litera; ghilimele SIMPLE, nu duble\n"
+        "- `bool aTrecut = true;` -- o cutie DA/NU; afiseaza `1` pentru true, `0` pentru false\n"
+        "- `cout << scor` -- afiseaza continutul cutiei pe ecran\n\n"
+        "**Atentie critica:** Daca scrii `int x;` fara valoare initiala, cutia contine un "
+        "**numar rezidual** ramas din alta parte -- produce calcule gresite garantat. "
+        "Obisnuieste-te sa initializezi mereu: `int x = 0;`, `char c = ' ';`, `bool b = false;`."
+      ),
+      "hacker": (
+        "### Declara. Initializeaza. Ruleaza.\n\n"
+        "```cpp\n"
+        "#include <iostream>\n"
+        "using namespace std;\n\n"
+        "int main() {\n"
+        "    int scor = 100;\n"
+        "    char litera = 'A';\n"
+        "    bool aTrecut = true;\n\n"
+        '    cout << scor << "\\n" << litera << "\\n" << aTrecut << "\\n";\n'
+        "    return 0;\n"
+        "}\n"
+        "```\n\n"
+        "**Breakdown rapid:**\n"
+        "- `int scor = 100;` -- 4 bytes alocati, valoare 100 stocata\n"
+        "- `char litera = 'A';` -- 1 byte, caracterul ASCII 65\n"
+        "- `bool aTrecut = true;` -- 1 byte logic; `true`=1, `false`=0\n"
+        "- Ghilimele SIMPLE pentru `char` -- ghilimelele duble sunt pentru siruri de text\n\n"
+        "**Garbage Value alert:** `int x;` fara initializare = continut imprevizibil din RAM. "
+        "Compilatorul nu curata memoria. In competitii, un Garbage Value nediagnosticat "
+        "= output gresit garantat. Regula: initializeaza tot ce declari."
+      ),
+      "socrates": (
+        "### Descoperi singur tipurile de date\n\n"
+        "Citeste codul si ghiceste ce apare pe ecran inainte sa citesti explicatiile:\n\n"
+        "```cpp\n"
+        "#include <iostream>\n"
+        "using namespace std;\n\n"
+        "int main() {\n"
+        "    int scor = 100;\n"
+        "    char litera = 'A';\n"
+        "    bool aTrecut = true;\n\n"
+        '    cout << "Scor: " << scor << "\\n";\n'
+        '    cout << "Litera: " << litera << "\\n";\n'
+        '    cout << "A trecut? " << aTrecut << "\\n";\n'
+        "    return 0;\n"
+        "}\n"
+        "```\n\n"
+        "**Hai sa verificam:**\n"
+        "- `char litera = 'A'` -- de ce ghilimele SIMPLE? Pentru ca `char` tine un singur caracter.\n"
+        "- Ce afiseaza `cout << aTrecut`? Afiseaza `1` pentru `true`. De ce crezi ca C++ face asta?\n"
+        "- Ce crezi ca se intampla daca scrii `int x;` fara valoare? Cutia nu e goala!\n\n"
+        "**Insight:** `int x;` fara initializare contine un numar ciudat ramas din alta parte -- "
+        "numit Valoare Gunoi. Computerul nu curata cutia cand o creeaza. "
+        "Daca o folosesti inainte sa pui ceva in ea, calculele tale vor fi gresite."
+      ),
+    },
+    "python": {
+      "architect": (
+        "### Cum declaram variabile in Python\n\n"
+        "In Python nu ai nevoie de tipuri -- scrii direct numele si valoarea:\n\n"
+        "```python\n"
+        "scor = 100\n"
+        "litera = 'A'\n"
+        "aTrecut = True\n\n"
+        'print("Scor:", scor)\n'
+        'print("Litera:", litera)\n'
+        'print("A trecut?", aTrecut)\n'
+        "```\n\n"
+        "**Ce face fiecare linie:**\n"
+        "- `scor = 100` -- creaza automat o cutie de numere intregi si pune 100 in ea\n"
+        "- `litera = 'A'` -- creaza o cutie de text; poti folosi ghilimele simple sau duble\n"
+        "- `aTrecut = True` -- creaza o cutie DA/NU; `True` cu T mare -- asta e obligatoriu\n"
+        "- `print(\"Scor:\", scor)` -- afiseaza eticheta si continutul cutiei\n\n"
+        "**Avantaj cheie:** In Python nu exista Valoarea Gunoi -- nu poti crea o variabila "
+        "fara sa pui ceva in ea din prima secunda. Daca scrii `aTrecut = True` cu `t` mic, "
+        "Python nu stie ce inseamna `true` si da eroare."
+      ),
+      "hacker": (
+        "### Asigneaza. Detecteaza. Ruleaza.\n\n"
+        "```python\n"
+        "scor = 100\n"
+        "litera = 'A'\n"
+        "aTrecut = True\n\n"
+        "print(scor, litera, aTrecut)\n"
+        "```\n\n"
+        "**Breakdown rapid:**\n"
+        "- `scor = 100` -- Python detecteaza automat: tip int\n"
+        "- `litera = 'A'` -- Python detecteaza: tip str (sir de text, chiar si pentru un singur caracter)\n"
+        "- `aTrecut = True` -- tip bool; `True`/`False` cu majuscula -- obligatoriu\n"
+        "- `print(scor, litera, aTrecut)` -- afiseaza toate, separate prin spatiu\n\n"
+        "**Trick:** In Python nu exista Garbage Value. "
+        "Nu poti declara o variabila fara valoare -- daca incerci `x = None` macar. "
+        "Scrie `true` cu mica si primesti `NameError: name 'true' is not defined`. "
+        "Mereu `True` si `False` cu majuscula."
+      ),
+      "socrates": (
+        "### Descoperi singur cum functioneaza variabilele in Python\n\n"
+        "Citeste codul si ghiceste ce apare pe ecran:\n\n"
+        "```python\n"
+        "scor = 100\n"
+        "litera = 'A'\n"
+        "aTrecut = True\n\n"
+        'print("Scor:", scor)\n'
+        'print("Litera:", litera)\n'
+        'print("A trecut?", aTrecut)\n'
+        "```\n\n"
+        "**Hai sa verificam:**\n"
+        "- De ce nu scriem `int scor = 100` ca in C++? Python stie singur ca 100 e un numar.\n"
+        "- Ce crezi ca se intampla daca scrii `aTrecut = true` cu `t` mic? Incearca!\n"
+        "- De ce `litera = 'A'` functioneaza cu ghilimele simple sau duble in Python, "
+        "dar in C++ `char` necesita OBLIGATORIU ghilimele simple?\n\n"
+        "**Insight:** In Python nu exista 'cutii goale' -- "
+        "nu poti crea o variabila fara sa ii dai o valoare din prima. "
+        "Asta elimina complet pericolul Valorii Gunoi din C++. "
+        "Totusi, `True` cu majuscula e singura capcana de retinut."
+      ),
+    },
+  },
+  "en": {
+    "cpp": {
+      "architect": (
+        "### How to Declare Variables in C++\n\n"
+        "Let us see how we reserve space and what we put in each box:\n\n"
+        "```cpp\n"
+        "#include <iostream>\n"
+        "using namespace std;\n\n"
+        "int main() {\n"
+        "    int score = 100;\n"
+        "    char letter = 'A';\n"
+        "    bool passed = true;\n\n"
+        '    cout << "Score: " << score << "\\n";\n'
+        '    cout << "Letter: " << letter << "\\n";\n'
+        '    cout << "Passed? " << passed << "\\n";\n'
+        "    return 0;\n"
+        "}\n"
+        "```\n\n"
+        "**What each line does:**\n"
+        "- `int score = 100;` -- reserves a box for whole numbers, names it `score`, puts 100 in it\n"
+        "- `char letter = 'A';` -- a box for one single letter; SINGLE quotes, not double\n"
+        "- `bool passed = true;` -- a yes/no box; displays `1` for true, `0` for false\n"
+        "- `cout << score` -- displays the contents of the box on screen\n\n"
+        "**Critical warning:** If you write `int x;` without an initial value, the box holds a "
+        "**residual number** left from somewhere else -- guaranteed wrong calculations. "
+        "Always initialize: `int x = 0;`, `char c = ' ';`, `bool b = false;`."
+      ),
+      "hacker": (
+        "### Declare. Initialize. Run.\n\n"
+        "```cpp\n"
+        "#include <iostream>\n"
+        "using namespace std;\n\n"
+        "int main() {\n"
+        "    int score = 100;\n"
+        "    char letter = 'A';\n"
+        "    bool passed = true;\n\n"
+        '    cout << score << "\\n" << letter << "\\n" << passed << "\\n";\n'
+        "    return 0;\n"
+        "}\n"
+        "```\n\n"
+        "**Quick breakdown:**\n"
+        "- `int score = 100;` -- 4 bytes allocated, value 100 stored\n"
+        "- `char letter = 'A';` -- 1 byte, ASCII character 65\n"
+        "- `bool passed = true;` -- 1 logical byte; `true`=1, `false`=0\n"
+        "- SINGLE quotes for `char` -- double quotes are for text strings\n\n"
+        "**Garbage Value alert:** `int x;` without initialization = unpredictable content from RAM. "
+        "The compiler does not clean memory. In competitions, an undiagnosed Garbage Value "
+        "= guaranteed wrong output. Rule: initialize everything you declare."
+      ),
+      "socrates": (
+        "### Discover the Data Types Yourself\n\n"
+        "Read the code and guess what appears on screen before reading the explanations:\n\n"
+        "```cpp\n"
+        "#include <iostream>\n"
+        "using namespace std;\n\n"
+        "int main() {\n"
+        "    int score = 100;\n"
+        "    char letter = 'A';\n"
+        "    bool passed = true;\n\n"
+        '    cout << "Score: " << score << "\\n";\n'
+        '    cout << "Letter: " << letter << "\\n";\n'
+        '    cout << "Passed? " << passed << "\\n";\n'
+        "    return 0;\n"
+        "}\n"
+        "```\n\n"
+        "**Let us check:**\n"
+        "- `char letter = 'A'` -- why SINGLE quotes? Because `char` holds exactly one character.\n"
+        "- What does `cout << passed` display? It shows `1` for `true`. Why do you think C++ does that?\n"
+        "- What do you think happens if you write `int x;` without a value? The box is not empty!\n\n"
+        "**Insight:** `int x;` without initialization holds a leftover number from somewhere else -- "
+        "called a Garbage Value. The computer does not clean the box when it creates it. "
+        "Use it before putting something in and all your calculations will be wrong."
+      ),
+    },
+    "python": {
+      "architect": (
+        "### How to Declare Variables in Python\n\n"
+        "In Python you do not need types -- write the name and value directly:\n\n"
+        "```python\n"
+        "score = 100\n"
+        "letter = 'A'\n"
+        "passed = True\n\n"
+        'print("Score:", score)\n'
+        'print("Letter:", letter)\n'
+        'print("Passed?", passed)\n'
+        "```\n\n"
+        "**What each line does:**\n"
+        "- `score = 100` -- automatically creates an integer box and puts 100 in it\n"
+        "- `letter = 'A'` -- creates a text box; you can use single or double quotes\n"
+        "- `passed = True` -- creates a yes/no box; `True` with capital T -- that is mandatory\n"
+        "- `print(\"Score:\", score)` -- displays the label and the contents of the box\n\n"
+        "**Key advantage:** In Python there is no Garbage Value -- you cannot create a variable "
+        "without putting something in it from the start. "
+        "If you write `passed = True` with a lowercase `t`, "
+        "Python does not know what `true` means and throws an error."
+      ),
+      "hacker": (
+        "### Assign. Detect. Run.\n\n"
+        "```python\n"
+        "score = 100\n"
+        "letter = 'A'\n"
+        "passed = True\n\n"
+        "print(score, letter, passed)\n"
+        "```\n\n"
+        "**Quick breakdown:**\n"
+        "- `score = 100` -- Python auto-detects: type int\n"
+        "- `letter = 'A'` -- Python detects: type str (text string, even for a single character)\n"
+        "- `passed = True` -- type bool; `True`/`False` with capital -- mandatory\n"
+        "- `print(score, letter, passed)` -- prints all three, separated by spaces\n\n"
+        "**Trick:** In Python there is no Garbage Value. "
+        "You cannot declare a variable without a value. "
+        "Write `true` with lowercase and you get `NameError: name 'true' is not defined`. "
+        "Always `True` and `False` with a capital letter."
+      ),
+      "socrates": (
+        "### Discover How Variables Work in Python\n\n"
+        "Read the code and guess what will appear on screen:\n\n"
+        "```python\n"
+        "score = 100\n"
+        "letter = 'A'\n"
+        "passed = True\n\n"
+        'print("Score:", score)\n'
+        'print("Letter:", letter)\n'
+        'print("Passed?", passed)\n'
+        "```\n\n"
+        "**Let us check:**\n"
+        "- Why do we not write `int score = 100` like in C++? Python knows 100 is a number by itself.\n"
+        "- What do you think happens if you write `passed = true` with a lowercase `t`? Try it!\n"
+        "- Why does `letter = 'A'` work with single or double quotes in Python, "
+        "but in C++ `char` requires SINGLE quotes only?\n\n"
+        "**Insight:** In Python there are no 'empty boxes' -- "
+        "you cannot create a variable without giving it a value from the start. "
+        "This completely eliminates the Garbage Value danger from C++. "
+        "The only trap to remember: `True` and `False` with a capital letter."
+      ),
+    },
+  },
+}
+
+# ─── ASSEMBLE THEORY ──────────────────────────────────────────────────────────
+
+theory = {}
+for lang in ("ro", "en"):
+    theory[lang] = {}
+    for tech in ("cpp", "python"):
+        theory[lang][tech] = {}
+        for style in ("architect", "hacker", "socrates"):
+            theory[lang][tech][style] = {
+                "pages":   pages[lang][tech][style],
+                "cascade": cascades[lang][tech][style],
+            }
+
+# ─── QUIZ — split by codeLang ─────────────────────────────────────────────────
+
+quiz = {
+  "cpp": [
+    {
+      "question_ro": "Ce reprezinta o 'valoare gunoi' (Garbage Value) in C++?",
+      "question_en": "What is a 'Garbage Value' in C++?",
+      "options_ro": [
+        "Un mesaj de eroare pe care il afiseaza compilatorul",
+        "Un numar rezidual ramas in memorie daca declari o variabila fara valoare initiala",
+        "O valoare pe care C++ o pune automat cand creezi o variabila",
+        "Un tip special de variabila folosit pentru depanare",
+      ],
+      "options_en": [
+        "An error message displayed by the compiler",
+        "A residual number left in memory when you declare a variable without an initial value",
+        "A value that C++ automatically puts when you create a variable",
+        "A special type of variable used for debugging",
+      ],
+      "correctAnswerIndex": 1,
+      "explanation_ro": (
+        "In C++, memoria nu e curatata cand declari o variabila. "
+        "Daca scrii `int x;` fara valoare, `x` contine ce a ramas acolo de la alte programe -- "
+        "un numar imprevizibil. De aceea trebuie sa initializezi mereu: `int x = 0;`."
+      ),
+      "explanation_en": (
+        "In C++, memory is not cleaned when you declare a variable. "
+        "If you write `int x;` without a value, `x` holds whatever was left there by other programs -- "
+        "an unpredictable number. That is why you must always initialize: `int x = 0;`."
+      ),
+    },
+    {
+      "question_ro": "Ce tip de date folosesti in C++ pentru a stoca o singura litera, cum ar fi 'A'?",
+      "question_en": "What data type do you use in C++ to store a single letter, like 'A'?",
+      "options_ro": [
+        "`int litera = 'A';`",
+        "`char litera = 'A';`",
+        "`string litera = 'A';`",
+        "`bool litera = 'A';`",
+      ],
+      "options_en": [
+        "`int letter = 'A';`",
+        "`char letter = 'A';`",
+        "`string letter = 'A';`",
+        "`bool letter = 'A';`",
+      ],
+      "correctAnswerIndex": 1,
+      "explanation_ro": (
+        "`char` este tipul pentru un singur caracter si se foloseste cu ghilimele SIMPLE: `'A'`. "
+        "`int` este pentru numere intregi, `bool` pentru DA/NU, iar `string` pentru siruri de text (mai multe litere). "
+        "Ghilimelele duble (`\"A\"`) ar insemna un sir de text, nu un singur caracter."
+      ),
+      "explanation_en": (
+        "`char` is the type for a single character and uses SINGLE quotes: `'A'`. "
+        "`int` is for whole numbers, `bool` for yes/no, and `string` for text strings (multiple letters). "
+        "Double quotes (`\"A\"`) would mean a text string, not a single character."
+      ),
+    },
+    {
+      "question_ro": "Ce tip de date vei folosi daca vrei ca o variabila sa retina daca un elev a trecut sau nu un test?",
+      "question_en": "What data type will you use if you want a variable to store whether a student passed a test?",
+      "options_ro": [
+        "`int`, pentru ca poti folosi 1 si 0",
+        "`char`, pentru a stoca litera 'Y' sau 'N'",
+        "`bool`, pentru ca retine doar stari de adevarat sau fals",
+        "`float`, pentru a stoca procentaje",
+      ],
+      "options_en": [
+        "`int`, because you can use 1 and 0",
+        "`char`, to store the letter 'Y' or 'N'",
+        "`bool`, because it holds only true or false states",
+        "`float`, to store percentages",
+      ],
+      "correctAnswerIndex": 2,
+      "explanation_ro": (
+        "`bool` este exact tipul potrivit pentru informatii de tip DA/NU, "
+        "adevarat/fals, trecut/picat. Valorile posibile sunt `true` si `false`. "
+        "Desi `int` cu 1/0 ar merge tehnic, `bool` comunica mult mai clar intentia codului."
+      ),
+      "explanation_en": (
+        "`bool` is exactly the right type for yes/no, true/false, passed/failed information. "
+        "The possible values are `true` and `false`. "
+        "Although `int` with 1/0 would technically work, `bool` communicates the intent of the code much more clearly."
+      ),
+    },
+  ],
+  "python": [
+    {
+      "question_ro": "Cum creezi o variabila in Python comparativ cu C++?",
+      "question_en": "How do you create a variable in Python compared to C++?",
+      "options_ro": [
+        "Scrii tipul variabilei, apoi numele, ca in C++",
+        "Scrii direct numele si valoarea, fara sa specifici tipul",
+        "Folosesti cuvantul cheie `var` inainte de nume",
+        "Trebuie sa importi un modul special pentru variabile",
+      ],
+      "options_en": [
+        "You write the type of the variable first, then the name, like in C++",
+        "You write just the name and value directly, without specifying a type",
+        "You use the keyword `var` before the name",
+        "You need to import a special module for variables",
+      ],
+      "correctAnswerIndex": 1,
+      "explanation_ro": (
+        "In Python scrii direct `scor = 100` -- fara `int`, fara tip. "
+        "Python detecteaza automat tipul din valoarea pe care o atribui. "
+        "Asta inseamna mai putin cod de scris si mai putine greseli de inceput."
+      ),
+      "explanation_en": (
+        "In Python you write directly `score = 100` -- no `int`, no type. "
+        "Python automatically detects the type from the value you assign. "
+        "This means less code to write and fewer beginner mistakes."
+      ),
+    },
+    {
+      "question_ro": "Cum se scrie corect valoarea booleana 'adevarat' in Python?",
+      "question_en": "How do you correctly write the boolean value 'true' in Python?",
+      "options_ro": [
+        "`true`",
+        "`TRUE`",
+        "`True`",
+        "`1`",
+      ],
+      "options_en": [
+        "`true`",
+        "`TRUE`",
+        "`True`",
+        "`1`",
+      ],
+      "correctAnswerIndex": 2,
+      "explanation_ro": (
+        "In Python, valorile booleane se scriu cu prima litera mare: `True` si `False`. "
+        "`true` cu litera mica genereaza `NameError: name 'true' is not defined` -- "
+        "Python il confunda cu numele unei variabile. "
+        "Spre deosebire de C++, Python nu accepta `1` si `0` ca substitut pentru bool."
+      ),
+      "explanation_en": (
+        "In Python, boolean values are written with a capital first letter: `True` and `False`. "
+        "`true` with a lowercase letter causes `NameError: name 'true' is not defined` -- "
+        "Python confuses it with a variable name. "
+        "Unlike C++, Python does not treat `1` and `0` as substitutes for bool."
+      ),
+    },
+    {
+      "question_ro": "Ce se intampla daca incerci sa creezi o variabila Python fara sa ii dai o valoare (`x`)?",
+      "question_en": "What happens if you try to create a Python variable without giving it a value (`x`)?",
+      "options_ro": [
+        "Python creaza variabila cu valoarea 0 in mod automat",
+        "Python da eroare -- nu poti declara o variabila fara valoare",
+        "Python creeaza o variabila goala (None)",
+        "Python ii atribuie valoarea anterioara din memorie",
+      ],
+      "options_en": [
+        "Python creates the variable with value 0 automatically",
+        "Python gives an error -- you cannot declare a variable without a value",
+        "Python creates an empty variable (None)",
+        "Python assigns the previous value from memory",
+      ],
+      "correctAnswerIndex": 1,
+      "explanation_ro": (
+        "In Python nu poti scrie doar `x` pe o linie -- Python nu stie ce sa faca cu asta si da eroare. "
+        "Spre deosebire de C++, nu exista 'cutii goale' cu Valori Gunoi. "
+        "Daca vrei o variabila fara valoare reala, folosesti explicit `x = None`."
+      ),
+      "explanation_en": (
+        "In Python you cannot just write `x` on a line -- Python does not know what to do with it and throws an error. "
+        "Unlike C++, there are no 'empty boxes' with Garbage Values. "
+        "If you want a variable without a real value, you explicitly use `x = None`."
+      ),
+    },
+  ],
+}
+
+# ─── FINAL DATA ───────────────────────────────────────────────────────────────
+
+data = {
+    "id": "mod01_02",
+    "titleKey": "lessons.mod01_02",
+    "interactiveComponent": "MissionMemoryAllocator",
+    "theory": theory,
+    "quiz": quiz,
+}
+
+out = json.dumps(data, ensure_ascii=False, indent=2)
+OUT.write_text(out, encoding="utf-8")
+print(f"Written {len(out):,} bytes to {OUT}")
+
+parsed = json.loads(out)
+assert parsed["id"] == "mod01_02"
+assert set(parsed["quiz"].keys()) == {"cpp", "python"}
+assert all(len(parsed["quiz"][t]) == 3 for t in ("cpp", "python"))
+for lang in ("ro", "en"):
+    for tech in ("cpp", "python"):
+        for style in ("architect", "hacker", "socrates"):
+            b = parsed["theory"][lang][tech][style]
+            assert len(b["pages"]) == 2 and b["cascade"], f"Bad: {lang}/{tech}/{style}"
+print("Valid -- 12 theory variants, quiz split by codeLang, no emojis")
