@@ -1,0 +1,28 @@
+[
+  {
+    "question_en": "What is the correct C++ declaration for an integer variable called 'score' with value 100?",
+    "question_ro": "Care este declarația corectă în C++ pentru o variabilă întreagă numită 'scor' cu valoarea 100?",
+    "options": [
+      {"en": "int score = 100;", "ro": "int scor = 100;"},
+      {"en": "score = 100", "ro": "scor = 100"},
+      {"en": "integer score = 100;", "ro": "integer scor = 100;"},
+      {"en": "var score = 100;", "ro": "var scor = 100;"}
+    ],
+    "correct_index": 0,
+    "explanation_en": "In C++, you must specify the data type before the variable name. `int` is the keyword for integer type. The statement ends with a semicolon.",
+    "explanation_ro": "În C++, trebuie să specifici tipul de date înaintea numelui variabilei. `int` este cuvântul cheie pentru tipul întreg. Instrucțiunea se termină cu punct și virgulă."
+  },
+  {
+    "question_en": "Which Python statement correctly creates a boolean variable set to True?",
+    "question_ro": "Care instrucțiune Python creează corect o variabilă booleană cu valoarea True?",
+    "options": [
+      {"en": "bool isActive = True", "ro": "bool esteActiv = True"},
+      {"en": "isActive = True", "ro": "esteActiv = True"},
+      {"en": "boolean isActive = True", "ro": "boolean esteActiv = True"},
+      {"en": "isActive = true", "ro": "esteActiv = true"}
+    ],
+    "correct_index": 1,
+    "explanation_en": "Python uses dynamic typing — you just assign the value directly. `True` (capital T) is Python's boolean literal. Note: `true` (lowercase) is not valid Python.",
+    "explanation_ro": "Python folosește tipizare dinamică — atribui direct valoarea. `True` (T mare) este literalul boolean în Python. Atenție: `true` (t mic) nu este Python valid."
+  }
+]

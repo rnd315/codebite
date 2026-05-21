@@ -1,0 +1,28 @@
+[
+  {
+    "question_en": "How many times does `for i in range(5): print(i)` print?",
+    "question_ro": "De câte ori afișează `for i in range(5): print(i)`?",
+    "options": [
+      {"en": "4 times", "ro": "De 4 ori"},
+      {"en": "5 times", "ro": "De 5 ori"},
+      {"en": "6 times", "ro": "De 6 ori"},
+      {"en": "Infinite times", "ro": "Infinit de ori"}
+    ],
+    "correct_index": 1,
+    "explanation_en": "`range(5)` generates [0, 1, 2, 3, 4] — five values. The loop prints each one, so it prints exactly 5 times.",
+    "explanation_ro": "`range(5)` generează [0, 1, 2, 3, 4] — cinci valori. Bucla afișează fiecare, deci afișează exact de 5 ori."
+  },
+  {
+    "question_en": "What does `elif` in Python correspond to in C++?",
+    "question_ro": "La ce corespunde `elif` din Python în C++?",
+    "options": [
+      {"en": "else", "ro": "else"},
+      {"en": "else if", "ro": "else if"},
+      {"en": "elseif", "ro": "elseif"},
+      {"en": "switch", "ro": "switch"}
+    ],
+    "correct_index": 1,
+    "explanation_en": "`elif` is Python's shorthand for `else if`. In C++ you write `else if (condition) { }` as two separate keywords.",
+    "explanation_ro": "`elif` este prescurtarea Python pentru `else if`. În C++ se scrie `else if (condiție) { }` ca două cuvinte cheie separate."
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "slug": "loops-conditionals",
+  "order_index": 2,
+  "title_en": "Loops and Conditionals",
+  "title_ro": "Bucle și Instrucțiuni Condiționale",
+  "category": "basics",
+  "difficulty": 1,
+  "has_visualizer": false
+}

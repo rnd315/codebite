@@ -1,0 +1,28 @@
+[
+  {
+    "question_en": "What is the time complexity of Linear Search in the worst case?",
+    "question_ro": "Care este complexitatea temporală a Căutării Liniare în cel mai rău caz?",
+    "options": [
+      {"en": "O(1)", "ro": "O(1)"},
+      {"en": "O(log n)", "ro": "O(log n)"},
+      {"en": "O(n)", "ro": "O(n)"},
+      {"en": "O(n²)", "ro": "O(n²)"}
+    ],
+    "correct_index": 2,
+    "explanation_en": "In the worst case (element not found or at the last position), Linear Search examines every element once, giving O(n) time complexity.",
+    "explanation_ro": "În cel mai rău caz (elementul nu e găsit sau e la ultima poziție), Căutarea Liniară examinează fiecare element o dată, dând complexitate O(n)."
+  },
+  {
+    "question_en": "When is Linear Search preferred over Binary Search?",
+    "question_ro": "Când este preferată Căutarea Liniară față de Căutarea Binară?",
+    "options": [
+      {"en": "When the array is very large", "ro": "Când tabloul este foarte mare"},
+      {"en": "When the array is unsorted", "ro": "Când tabloul este nesortat"},
+      {"en": "When speed is the top priority", "ro": "Când viteza este prioritatea principală"},
+      {"en": "When memory is limited", "ro": "Când memoria este limitată"}
+    ],
+    "correct_index": 1,
+    "explanation_en": "Binary Search requires a sorted array. If the array is unsorted, you must use Linear Search (or sort first, then binary search — but that's O(n log n) overhead).",
+    "explanation_ro": "Căutarea Binară necesită un tablou sortat. Dacă tabloul este nesortat, trebuie să folosești Căutarea Liniară (sau să sortezi mai întâi, apoi Căutare Binară — dar asta adaugă O(n log n) overhead)."
+  }
+]

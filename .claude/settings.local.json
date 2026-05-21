@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Move-Item -Path \"c:\\\\Users\\\\rober\\\\Desktop\\\\projects\\\\CodeByte\\\\Codebyte-2026-05-15.zip\" -Destination \"c:\\\\Users\\\\rober\\\\Desktop\\\\projects\\\\CodeByte\\\\archive\\\\Codebyte-2026-05-15.zip\")",
+      "WebFetch(domain:www.pbinfo.ro)",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\rober\\\\Desktop\\\\projects\\\\CodeByte\\\\backend\\\\lessons\\\\06-binary-search\")",
+      "PowerShell(ssh -p 2299 claude-agent@207.154.208.44 \"ls -la /var/www/codebite.crystalmind.ro/ && echo '---' && id && echo '---' && sudo ls /var/www/codebite.crystalmind.ro/ 2>&1\")",
+      "PowerShell(ssh -p 2299 claude-agent@207.154.208.44 \"touch /var/www/codebite.crystalmind.ro/app/test_write && echo 'APP_WRITE_OK' && rm /var/www/codebite.crystalmind.ro/app/test_write; sudo touch /var/www/codebite.crystalmind.ro/codebite-probe-xk7q2m.html && sudo chmod 644 /var/www/codebite.crystalmind.ro/codebite-probe-xk7q2m.html && echo 'PROBE_OK'\")",
+      "PowerShell(ssh -p 2299 claude-agent@207.154.208.44 \"sudo cat /etc/systemd/system/codebite.service\")"
+    ]
+  }
+}

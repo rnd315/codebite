@@ -1,0 +1,9 @@
+{
+  "slug": "linear-search",
+  "order_index": 5,
+  "title_en": "Linear Search",
+  "title_ro": "Căutare Liniară (Linear Search)",
+  "category": "searching",
+  "difficulty": 1,
+  "has_visualizer": true
+}

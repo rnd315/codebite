@@ -1,0 +1,28 @@
+[
+  {
+    "question_en": "What is the index of the FIRST element in an array?",
+    "question_ro": "Care este indexul PRIMULUI element dintr-un tablou?",
+    "options": [
+      {"en": "1", "ro": "1"},
+      {"en": "0", "ro": "0"},
+      {"en": "-1", "ro": "-1"},
+      {"en": "It depends on the language", "ro": "Depinde de limbaj"}
+    ],
+    "correct_index": 1,
+    "explanation_en": "Both C++ and Python use zero-based indexing. The first element is always at index 0. This is universal in most programming languages.",
+    "explanation_ro": "Atât C++ cât și Python folosesc indexare de la zero. Primul element este întotdeauna la indexul 0. Aceasta este o convenție universală în majoritatea limbajelor de programare."
+  },
+  {
+    "question_en": "What is the time complexity of accessing an element by index in an array?",
+    "question_ro": "Care este complexitatea temporală a accesării unui element prin index într-un tablou?",
+    "options": [
+      {"en": "O(n)", "ro": "O(n)"},
+      {"en": "O(log n)", "ro": "O(log n)"},
+      {"en": "O(1)", "ro": "O(1)"},
+      {"en": "O(n²)", "ro": "O(n²)"}
+    ],
+    "correct_index": 2,
+    "explanation_en": "Array indexing is O(1) — constant time. The address is computed directly as base + i × size, so it takes the same time regardless of array length.",
+    "explanation_ro": "Indexarea în tablou este O(1) — timp constant. Adresa se calculează direct ca baza + i × dimensiune, deci durează același timp indiferent de lungimea tabloului."
+  }
+]

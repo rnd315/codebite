@@ -1,0 +1,9 @@
+{
+  "slug": "bubble-sort",
+  "order_index": 4,
+  "title_en": "Bubble Sort",
+  "title_ro": "Sortare prin Bulă (Bubble Sort)",
+  "category": "sorting",
+  "difficulty": 2,
+  "has_visualizer": true
+}

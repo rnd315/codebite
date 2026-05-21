@@ -1,0 +1,9 @@
+{
+  "slug": "binary-search",
+  "order_index": 6,
+  "title_en": "Binary Search",
+  "title_ro": "Căutare Binară (Binary Search)",
+  "category": "searching",
+  "difficulty": 2,
+  "has_visualizer": true
+}
