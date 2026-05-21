@@ -215,14 +215,14 @@ export default function Navbar() {
           {/* UPTIME chip */}
           <div className="hidden items-center gap-1.5 rounded-md glass px-2.5 py-1.5 sm:inline-flex">
             <Zap size={13.5} className="text-accent fill-accent" strokeWidth={2} />
-            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">UPTIME</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{t('gamification.streak')}</span>
             <span className="font-mono text-xs font-bold text-foreground">{streak}d</span>
           </div>
 
           {/* TOKENS chip */}
           <div className="hidden items-center gap-1.5 rounded-md glass px-2.5 py-1.5 sm:inline-flex">
             <Hexagon size={13.5} className="text-primary fill-primary/30" strokeWidth={2.5} />
-            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">TOKENS</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{t('gamification.lives')}</span>
             <span className="font-mono text-xs font-bold text-foreground">{lives}/{MAX_TOKENS}</span>
           </div>
 

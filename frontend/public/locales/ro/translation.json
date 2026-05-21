@@ -103,9 +103,26 @@
     "noQuestions": "Nicio întrebare încă. Fii primul!",
     "jumpToFeed": "> DEPANEAZĂ & CÂȘTIGĂ"
   },
+  "modules": {
+    "mod_01": { "title": "FUNDAMENTE",         "subtitle": "Sintaxă · Variabile · I/E · Operatori" },
+    "mod_02": { "title": "CONTROL FLUX",       "subtitle": "If/Else · While · For" },
+    "mod_03": { "title": "CALCUL NUMERIC",     "subtitle": "Cifre · Prime · Euclid" },
+    "mod_04": { "title": "STRUCTURI DE DATE",  "subtitle": "Vectori 1D · Parcurgere" },
+    "mod_05": { "title": "ALGORITMI DE BAZĂ",  "subtitle": "Căutare Liniară · Sortare Bulă" },
+    "mod_06": { "title": "MATRICEA",           "subtitle": "Matrice 2D · Diagonale" }
+  },
   "module": {
     "backToDashboard": "înapoi la panou",
-    "lockedMessage": "Completează modulul anterior pentru a debloca"
+    "lockedMessage": "Completează modulul anterior pentru a debloca",
+    "statusActive": "ACTIV",
+    "statusComplete": "COMPLET",
+    "statusLocked": "BLOCAT",
+    "statusClassified": "CLASIFICAT",
+    "sectorLocked": "SECTOR BLOCAT",
+    "fogUnlockHint": "completează modulele anterioare pentru a debloca",
+    "metaUnits": "UNITĂȚI",
+    "metaEta": "ETA",
+    "encrypted": "criptat"
   },
   "mobileNav": {
     "learn": "Învață",

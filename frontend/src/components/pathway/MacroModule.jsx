@@ -91,7 +91,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
   const eta = Math.ceil(lessons.length * 0.25)
   const progressPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0
 
-  const moduleTitle = module.label.split(' // ')[1] ?? module.label
+  const moduleTitle = t(`modules.${module.id}.title`)
 
   return (
     <motion.div
@@ -135,7 +135,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
               <Lock className="relative h-9 w-9 text-foreground" strokeWidth={2} />
             </div>
             <div className="font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-foreground">
-              SECTOR LOCKED
+              {t('module.sectorLocked')}
             </div>
             <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
               {t('module.lockedMessage')}
@@ -164,10 +164,10 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
               <span className="relative font-mono text-3xl font-black text-primary/60 select-none">?</span>
             </div>
             <div className="font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-primary/70">
-              // CLASSIFIED
+              // {t('module.statusClassified')}
             </div>
             <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/60">
-              complete previous modules to unlock
+              {t('module.fogUnlockHint')}
             </div>
           </div>
         </motion.div>
@@ -184,25 +184,25 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
         {isActive && (
           <span className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-accent-foreground">
             <Terminal size={10} strokeWidth={3} />
-            ACTIVE
+            {t('module.statusActive')}
           </span>
         )}
         {isCompleted && (
           <span className="inline-flex items-center gap-1.5 rounded-md border border-hairline bg-background/60 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-success">
             <CheckCircle2 size={10} strokeWidth={2.5} />
-            COMPLETE
+            {t('module.statusComplete')}
           </span>
         )}
         {isLocked && (
           <span className="inline-flex items-center gap-1.5 rounded-md border border-hairline bg-background/60 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
             <Lock size={10} strokeWidth={2.5} />
-            LOCKED
+            {t('module.statusLocked')}
           </span>
         )}
         {isFogOfWar && (
           <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-background/60 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-primary/70">
             <Signal size={10} strokeWidth={2.5} />
-            CLASSIFIED
+            {t('module.statusClassified')}
           </span>
         )}
       </div>
@@ -222,15 +222,15 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
             {moduleTitle}
           </h2>
           <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            {module.subtitle}
+            {t(`modules.${module.id}.subtitle`)}
           </p>
 
           {/* Meta strip */}
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
             {[
-              { label: 'UNITS', value: String(lessons.length) },
-              { label: 'XP', value: xpTotal >= 1000 ? `${(xpTotal / 1000).toFixed(1)}K` : String(xpTotal) },
-              { label: 'ETA', value: `${eta}h` },
+              { label: t('module.metaUnits'), value: String(lessons.length) },
+              { label: t('gamification.xp'), value: xpTotal >= 1000 ? `${(xpTotal / 1000).toFixed(1)}K` : String(xpTotal) },
+              { label: t('module.metaEta'), value: `${eta}h` },
             ].map((m) => (
               <div key={m.label} className="flex items-baseline gap-1.5">
                 <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground">{m.label}</span>
@@ -288,7 +288,7 @@ export default function MacroModule({ module, lessons, completedIds, moduleStatu
             >
               <span className="inline-flex items-center gap-2">
                 <Lock size={12} strokeWidth={2.5} />
-                encrypted
+                {t('module.encrypted')}
               </span>
             </button>
           )}

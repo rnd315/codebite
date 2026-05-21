@@ -22,11 +22,11 @@
 # =============================================================================
 
 $REMOTE_USER     = "claude-agent"
-$REMOTE_HOST     = "207.154.208.44"
-$REMOTE_PORT     = 2299
+$REMOTE_HOST     = "64.226.108.13"
+$REMOTE_PORT     = 22
 $REMOTE_PATH     = "/var/www/codebite.crystalmind.ro"
 $BACKEND_SERVICE = "codebite"
-$SSH_KEY         = "$env:USERPROFILE\.ssh\id_rsa"
+$SSH_KEY         = "$env:USERPROFILE\.ssh\id_ed25519"
 $TAR             = "C:\Windows\System32\tar.exe"
 
 # ---------------------------------------------------------------------------
@@ -196,7 +196,7 @@ server {
 '@
 
     $encoded  = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($nginxConfig))
-    $nginxCmd = "echo '$encoded' | base64 -d | sudo tee /etc/nginx/sites-available/codebite.crystalmind.ro > /dev/null && sudo nginx -t && sudo systemctl reload nginx && echo NGINX_OK"
+    $nginxCmd = "echo '$encoded' | base64 -d | sudo tee /etc/nginx/sites-available/codebite.crystalmind.ro > /dev/null && sudo ln -sf /etc/nginx/sites-available/codebite.crystalmind.ro /etc/nginx/sites-enabled/codebite.crystalmind.ro && sudo nginx -t && sudo systemctl reload nginx && echo NGINX_OK"
     $nginxOut = Invoke-SSH $nginxCmd
     Write-Host $nginxOut
     if ($nginxOut -match "NGINX_OK") { Write-Ok "Nginx vhost updated and reloaded" }
@@ -214,6 +214,7 @@ $remoteCmd = @"
 set -e
 echo '-- fix ownership'
 sudo chown -R www-data:www-data $REMOTE_PATH/dist $REMOTE_PATH/app
+sudo chmod -R u+rwX $REMOTE_PATH/dist $REMOTE_PATH/app
 cd $REMOTE_PATH/app
 echo '-- venv'
 if [ ! -d venv ]; then

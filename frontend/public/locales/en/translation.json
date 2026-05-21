@@ -103,9 +103,26 @@
     "noQuestions": "No questions yet. Be the first!",
     "jumpToFeed": "> DEBUG & EARN"
   },
+  "modules": {
+    "mod_01": { "title": "FOUNDATIONS",      "subtitle": "Syntax · Variables · I/O · Operators" },
+    "mod_02": { "title": "CONTROL FLOW",     "subtitle": "If/Else · While · For" },
+    "mod_03": { "title": "NUMBER CRUNCHING", "subtitle": "Digits · Primes · Euclid" },
+    "mod_04": { "title": "DATA STRUCTURES",  "subtitle": "Arrays 1D · Traversal" },
+    "mod_05": { "title": "CORE ALGORITHMS",  "subtitle": "Linear Search · Bubble Sort" },
+    "mod_06": { "title": "THE GRID",         "subtitle": "Matrices 2D · Diagonals" }
+  },
   "module": {
     "backToDashboard": "back to dashboard",
-    "lockedMessage": "Complete previous module to unlock"
+    "lockedMessage": "Complete previous module to unlock",
+    "statusActive": "ACTIVE",
+    "statusComplete": "COMPLETE",
+    "statusLocked": "LOCKED",
+    "statusClassified": "CLASSIFIED",
+    "sectorLocked": "SECTOR LOCKED",
+    "fogUnlockHint": "complete previous modules to unlock",
+    "metaUnits": "UNITS",
+    "metaEta": "ETA",
+    "encrypted": "encrypted"
   },
   "mobileNav": {
     "learn": "Learn",
